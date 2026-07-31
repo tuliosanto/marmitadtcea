@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pedidos de Marmita — DTCEA-SM</title>
+<meta name="description" content="Pedido de marmita do dia — DTCEA-SM">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0E5C3F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Marmita">
+<link rel="apple-touch-icon" href="icone-180.png">
+<style>
+:root{
+  /* Paleta tirada do brasão do DTCEA-SM: azul-marinho, dourado, cinza do radar, vermelho da seta.
+     Os nomes das variáveis (--verde, --mostarda...) ficaram do rascunho anterior, só os valores mudaram. */
+  --aluminio:#EEECE6; --tampa:#FFFFFF;
+  --tinta:#1B1140; --tinta-fraca:#5B5570;
+  --verde:#29166F; --verde-claro:#E9E5F5;
+  --escuro:#160A43;
+  --mostarda:#F5C400; --alerta:#D9251E;
+  --linha:#D9D5E3;
+  --raio:14px;
+  --sombra:0 1px 0 rgba(20,27,24,.05), 0 6px 18px -12px rgba(20,27,24,.4);
+  --fonte:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:var(--fonte);background:var(--aluminio);color:var(--tinta);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+.oculto{display:none !important}
+
+header{background:var(--verde);color:#fff;padding:calc(env(safe-area-inset-top) + 16px) 16px 16px}
+.head-in{max-width:560px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.head-esq{display:flex;align-items:center;gap:11px}
+.logo-brasao{width:44px;height:auto;flex:0 0 auto;border-radius:8px;background:#fff;padding:3px;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.marca{margin:0;font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.marca span{display:block;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.7;margin-bottom:3px}
+.head-dir{text-align:right;font-size:13px;line-height:1.3}
+.head-dir b{display:block;font-weight:700}
+.head-dir button{background:none;border:none;color:#fff;opacity:.75;font:inherit;font-size:12px;text-decoration:underline;padding:2px 0;cursor:pointer}
+
+nav.abas{background:var(--verde);padding:0 16px}
+nav.abas .abas-in{max-width:560px;margin:0 auto;display:flex;gap:4px}
+nav.abas button{flex:1;background:none;border:none;border-bottom:3px solid transparent;color:rgba(255,255,255,.65);font:inherit;font-size:13px;font-weight:700;padding:11px 4px;cursor:pointer}
+nav.abas button[aria-selected=true]{color:#fff;border-bottom-color:var(--mostarda)}
+
+main{padding-top:18px}
+
+.bloco{background:var(--tampa);border:1px solid var(--linha);border-radius:var(--raio);padding:16px;margin-bottom:12px;box-shadow:var(--sombra)}
+.rotulo{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta-fraca);margin:0 0 10px}
+label{display:block;font-size:13px;font-weight:600;color:var(--tinta-fraca);margin:0 0 6px}
+input[type=text],input[type=password],select{
+  width:100%;font:inherit;font-size:16px;color:var(--tinta);background:#fff;
+  border:1.5px solid var(--linha);border-radius:10px;padding:12px 13px;
+}
+input:focus,select:focus{outline:none;border-color:var(--verde);box-shadow:0 0 0 3px var(--verde-claro)}
+select{appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="9"><path d="M1 1l6 6 6-6" stroke="%235C6A64" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>');background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
+.campo{margin-bottom:12px}
+.campo:last-child{margin-bottom:0}
+
+.refeicoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ref{border:1.5px solid var(--linha);background:#fff;border-radius:12px;padding:14px;cursor:pointer;font:inherit;text-align:left;color:var(--tinta)}
+.ref b{display:block;font-size:18px;font-weight:800;letter-spacing:-.02em}
+.ref small{display:block;font-size:12px;color:var(--tinta-fraca);margin-top:2px}
+.ref[aria-pressed=true]{border-color:var(--verde);background:var(--verde-claro)}
+.ref:disabled{opacity:.5;cursor:not-allowed}
+.ref:disabled small{color:var(--alerta);font-weight:700}
+
+.btn{display:block;width:100%;font:inherit;font-size:17px;font-weight:800;background:var(--verde);color:#fff;border:none;border-radius:12px;padding:16px;cursor:pointer}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{background:var(--linha);color:#8C978F;cursor:default;transform:none}
+.btn-2{background:#fff;color:var(--tinta);border:1.5px solid var(--linha);font-size:15px;padding:13px}
+.btn-perigo{background:#fff;color:var(--alerta);border:1.5px solid #E8C9C1;font-size:15px;padding:13px}
+.btn-mini{width:auto;font-size:13px;font-weight:700;padding:8px 12px;border-radius:9px}
+.linha-btn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+
+.ficha{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra);overflow:hidden;margin-bottom:12px}
+.ficha-topo{background:var(--escuro);color:#fff;padding:11px 16px;display:flex;justify-content:space-between;align-items:center}
+.ficha-topo span{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.ficha-corpo{padding:16px;display:flex;gap:15px;align-items:center}
+.ficha-selo{flex:0 0 auto;width:56px;height:56px;border-radius:12px;background:var(--mostarda);display:flex;align-items:center;justify-content:center;font-size:28px}
+.ficha-corpo h2{margin:0 0 2px;font-size:19px;font-weight:800;letter-spacing:-.02em}
+.ficha-corpo p{margin:0;color:var(--tinta-fraca);font-size:14px}
+.picote{border-top:2px dashed var(--linha);margin:0 16px}
+.ficha-pe{padding:12px 16px 16px}
+
+.placar{background:var(--escuro);color:#fff;border-radius:var(--raio);padding:20px;margin-bottom:12px}
+.placar .rotulo{color:rgba(255,255,255,.55);margin-bottom:4px}
+.placar-num{font-size:62px;font-weight:800;line-height:.9;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.placar-num small{display:block;font-size:14px;font-weight:600;letter-spacing:0;opacity:.6;margin-top:10px}
+.risco{display:flex;flex-wrap:wrap;gap:11px;margin-top:14px;min-height:24px}
+.grupo{position:relative;display:flex;gap:4px}
+.grupo i{display:block;width:3px;height:24px;background:var(--mostarda);border-radius:2px}
+.grupo.cheio::after{content:"";position:absolute;left:-3px;right:-3px;top:11px;height:3px;background:var(--mostarda);border-radius:2px;transform:rotate(-20deg)}
+
+.tab{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--linha);font-size:15px}
+.tab:last-child{border-bottom:none}
+.tab b{font-variant-numeric:tabular-nums}
+.item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--linha)}
+.item:last-child{border-bottom:none}
+.item.pronto{opacity:.45}
+.item.pronto .item-nome{text-decoration:line-through}
+.item-info{flex:1;min-width:0}
+.item-nome{font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-sub{font-size:13px;color:var(--tinta-fraca)}
+.marcar{flex:0 0 auto;width:34px;height:34px;border-radius:9px;border:1.5px solid var(--linha);background:#fff;cursor:pointer;font-size:17px;color:var(--verde);line-height:1;padding:0}
+.marcar[aria-pressed=true]{background:var(--verde);border-color:var(--verde);color:#fff}
+.grupo-setor{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-fraca);padding:14px 0 3px;border-bottom:2px solid var(--escuro)}
+.vazio{margin:0;color:var(--tinta-fraca);font-size:15px}
+
+.cracha{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:5px;background:var(--escuro);color:#fff;margin-left:6px;vertical-align:1px}
+
+.aviso{border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:12px;border:1.5px solid}
+.aviso-amarelo{background:#FFF8E1;border-color:#F0DCA0;color:#6B5300}
+.aviso-erro{background:#FDEDE8;border-color:#E8C9C1;color:#8E2C15}
+.rodape{text-align:center;font-size:13px;color:var(--tinta-fraca);margin-top:20px}
+.rodape button{background:none;border:none;font:inherit;font-size:13px;color:var(--tinta-fraca);text-decoration:underline;cursor:pointer;padding:8px}
+
+.login-topo{text-align:center;padding:44px 0 24px}
+.login-topo h1{margin:0;font-size:30px;font-weight:800;letter-spacing:-.04em}
+.login-topo p{margin:4px 0 0;color:var(--tinta-fraca);font-size:15px}
+.login-selo{width:64px;height:auto;margin:0 auto 14px;display:block}
+
+
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:60;background:var(--escuro);color:#fff;padding:12px 20px;border-radius:999px;font-size:14px;font-weight:600;box-shadow:0 8px 24px -8px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:88vw;text-align:center}
+.toast.ver{opacity:1;transform:translateX(-50%) translateY(-6px)}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+:focus-visible{outline:3px solid var(--mostarda);outline-offset:2px}
+@media print{header,nav.abas,.btn,.linha-btn,.rodape,.marcar{display:none !important}body{background:#fff}}
+</style>
+</head>
+<body>
+
+<!-- ================= PEDIDO (público, sem login) ================= -->
+<section id="telaPedido">
+  <header>
+    <div class="head-in">
+      <div class="head-esq">
+        <img class="logo-brasao" src="logo.png" alt="Brasão DTCEA-SM">
+        <h1 class="marca"><span id="nomeUnidade">Pedidos de</span>Marmita</h1>
+      </div>
+      <div class="head-dir" id="dataTopo">—</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="avisoModo" class="aviso aviso-amarelo oculto"></div>
+    <div id="fichaBox" class="oculto"></div>
+
+    <form id="formPedido">
+      <div class="bloco">
+        <p class="rotulo">Seu nome</p>
+        <input type="text" id="nome" autocomplete="name" placeholder="Digite seu nome" required>
+      </div>
+
+      <div class="bloco">
+        <p class="rotulo">Setor</p>
+        <select id="setor" required>
+          <option value="" disabled selected>Escolha o setor</option>
+        </select>
+      </div>
+
+      <div class="bloco">
+        <p class="rotulo">Refeição</p>
+        <div class="refeicoes">
+          <button type="button" class="ref" data-ref="almoco" aria-pressed="false"><b>Almoço</b><small></small></button>
+          <button type="button" class="ref" data-ref="janta" aria-pressed="false"><b>Janta</b><small></small></button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn" id="btnEnviar" disabled>Escolha a refeição</button>
+    </form>
+
+    <p class="rodape"><button type="button" id="irEquipe">Sou motorista ou administrador</button></p>
+  </main>
+</section>
+
+<!-- ================= LOGIN DA EQUIPE ================= -->
+<section id="telaLogin" class="oculto">
+  <div class="wrap">
+    <div class="login-topo">
+      <img class="login-selo" src="logo.png" alt="Brasão DTCEA-SM">
+      <h1>Área da equipe</h1>
+      <p>Login do motorista ou administrador</p>
+    </div>
+    <form id="formLogin" class="bloco">
+      <div class="campo">
+        <label for="usuario">Usuário</label>
+        <input type="text" id="usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn" id="btnEntrar">Entrar</button>
+    </form>
+    <p class="rodape"><button type="button" id="voltarPedido">Voltar para o pedido</button></p>
+  </div>
+</section>
+
+<!-- ================= ÁREA DA EQUIPE (logado) ================= -->
+<div id="appEquipe" class="oculto">
+  <header>
+    <div class="head-in">
+      <div class="head-esq">
+        <img class="logo-brasao" src="logo.png" alt="Brasão DTCEA-SM">
+        <h1 class="marca"><span id="nomeUnidade2">Pedidos de</span>Marmita</h1>
+      </div>
+      <div class="head-dir"><b id="euNome">—</b><button type="button" id="btnSair">Sair</button></div>
+    </div>
+  </header>
+  <nav class="abas">
+    <div class="abas-in">
+      <button type="button" data-tela="painel" aria-selected="true">Painel</button>
+      <button type="button" data-tela="historico" aria-selected="false">Histórico</button>
+      <button type="button" data-tela="admin" aria-selected="false" id="abaAdmin">Administração</button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+
+    <!-- ---------- PAINEL DO MOTORISTA ---------- -->
+    <section id="telaPainel">
+      <div class="bloco">
+        <p class="rotulo">Data e refeição</p>
+        <p style="margin:0 0 10px;font-size:15px;font-weight:600" id="painelData"></p>
+        <div class="refeicoes">
+          <button type="button" class="ref pref" data-ref="almoco" aria-pressed="true"><b>Almoço</b><small id="prefAlmoco"></small></button>
+          <button type="button" class="ref pref" data-ref="janta" aria-pressed="false"><b>Janta</b><small id="prefJanta"></small></button>
+        </div>
+      </div>
+
+      <div class="placar">
+        <p class="rotulo">Pedir ao rancho</p>
+        <div class="placar-num"><span id="totalNum">0</span><small id="totalLabel">marmitas</small></div>
+        <div class="risco" id="risco"></div>
+      </div>
+
+      <button type="button" class="btn" id="btnWhats">Mandar o pedido pelo WhatsApp</button>
+      <div class="linha-btn">
+        <button type="button" class="btn btn-2" id="btnCopiar">Copiar lista</button>
+        <button type="button" class="btn btn-2" id="btnImprimir">Imprimir</button>
+      </div>
+
+      <div class="bloco" style="margin-top:12px">
+        <p class="rotulo">Por setor</p>
+        <div id="porSetor"></div>
+      </div>
+
+      <div class="bloco">
+        <p class="rotulo">Entrega <span id="progresso" style="float:right;letter-spacing:0;text-transform:none;font-size:12px"></span></p>
+        <div id="listaEntrega"></div>
+      </div>
+    </section>
+
+    <!-- ---------- HISTÓRICO ---------- -->
+    <section id="telaHistorico" class="oculto">
+      <div class="bloco">
+        <p class="rotulo">Período</p>
+        <form id="formHistorico">
+          <div class="dupla campo">
+            <div>
+              <label for="hIni">De</label>
+              <input type="date" id="hIni" required>
+            </div>
+            <div>
+              <label for="hFim">Até</label>
+              <input type="date" id="hFim" required>
+            </div>
+          </div>
+          <button type="submit" class="btn" id="btnBuscarHistorico">Buscar</button>
+        </form>
+      </div>
+
+      <div id="resultadoHistorico" class="oculto">
+        <div class="placar">
+          <p class="rotulo">Total no período</p>
+          <div class="placar-num"><span id="hTotalNum">0</span><small id="hTotalLabel">marmitas</small></div>
+        </div>
+
+        <div class="linha-btn" style="margin-top:0">
+          <button type="button" class="btn btn-2" id="btnExportarCsv">Exportar CSV</button>
+          <button type="button" class="btn btn-2" id="btnImprimirHistorico">Imprimir</button>
+        </div>
+
+        <div class="bloco" style="margin-top:12px">
+          <p class="rotulo">Por refeição</p>
+          <div id="hPorRefeicao"></div>
+        </div>
+
+        <div class="bloco">
+          <p class="rotulo">Por setor</p>
+          <div id="hPorSetor"></div>
+        </div>
+
+        <div class="bloco">
+          <p class="rotulo">Por dia</p>
+          <div id="hPorDia"></div>
+        </div>
+      </div>
+
+      <p class="vazio oculto" id="hVazio">Nenhum pedido nesse período.</p>
+    </section>
+
+    <!-- ---------- ADMINISTRAÇÃO ---------- -->
+    <section id="telaAdmin" class="oculto">
+
+      <div class="bloco">
+        <p class="rotulo" id="tituloFormEquipe">Cadastrar motorista ou administrador</p>
+        <form id="formEquipe">
+          <input type="hidden" id="eEditando">
+          <div class="campo">
+            <label for="eUsuario">Usuário</label>
+            <input type="text" id="eUsuario" autocapitalize="none" spellcheck="false" placeholder="ex.: joao" required>
+          </div>
+          <div class="campo">
+            <label for="eNome">Nome</label>
+            <input type="text" id="eNome" placeholder="ex.: João, motorista" required>
+          </div>
+          <div class="campo">
+            <label for="eSenha">Senha <span id="eSenhaDica"></span></label>
+            <input type="password" id="eSenha" autocomplete="new-password" placeholder="mínimo 6 caracteres">
+          </div>
+          <div class="campo">
+            <label style="font-size:15px;color:var(--tinta)"><input type="checkbox" id="eAdmin" style="width:auto;margin-right:8px;vertical-align:-2px">Também é administrador</label>
+          </div>
+          <button type="submit" class="btn" id="btnSalvarEquipe">Cadastrar</button>
+          <div class="linha-btn oculto" id="botoesEdicaoEquipe">
+            <button type="button" class="btn btn-2" id="btnCancelarEquipe">Cancelar</button>
+            <button type="button" class="btn btn-perigo" id="btnRemoverEquipe">Remover</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="bloco">
+        <p class="rotulo">Motoristas e administradores</p>
+        <div id="listaEquipe"></div>
+      </div>
+
+
+
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+/* =====================================================================
+   1) CONFIGURAÇÃO — o que se ajusta no dia a dia
+   ===================================================================== */
+const CONFIG = {
+  unidade: "Pedidos de",   // texto pequeno acima de "Marmita" no cabeçalho
+  fusoHorario: "America/Sao_Paulo",
+  prazos: { almoco: "09:45", janta: "15:30" },
+  whatsappRancho: "5551999999999",   // 55 + DDD + número, só dígitos
+  setores: ["APP", "EMA", "SMSA", "SMSO", "SMST", "TWR/EMS"],  // fixos — edite aqui se precisar alterar
+};
+
+/* Firebase: em branco = modo de teste (tudo fica só neste aparelho).
+   Preenchido = todos veem a mesma lista, ao vivo. Veja o LEIA-ME.md. */
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhYr2ZBpQ-OVdM8u9NbXzMBTsX6ztj_hk",
+      authDomain: "marmitas-dtceasm.firebaseapp.com",
+      projectId: "marmitas-dtceasm",
+      storageBucket: "marmitas-dtceasm.firebasestorage.app",
+      messagingSenderId: "639383948380",
+      appId: "1:639383948380:web:5660d7919f193c7ed8ea99"
+    };
+
+const REFEICOES = { almoco: "Almoço", janta: "Janta" };
+
+/* =====================================================================
+   2) Utilidades
+   ===================================================================== */
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+
+const guardado = {
+  _m: {},
+  get(k, p = null) { try { const v = localStorage.getItem(k); return v === null ? p : v; } catch { return k in this._m ? this._m[k] : p; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch { this._m[k] = v; } },
+  del(k) { try { localStorage.removeItem(k); } catch { delete this._m[k]; } },
+};
+
+const hojeISO = () => new Intl.DateTimeFormat("sv-SE", { timeZone: CONFIG.fusoHorario }).format(new Date());
+const agoraHM = () => new Intl.DateTimeFormat("pt-BR", { timeZone: CONFIG.fusoHorario, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+function dataLonga(iso) {
+  const d = new Date(iso + "T12:00:00");
+  const t = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit" }).format(d);
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+function dataCurtaBR(iso) {
+  const d = new Date(iso + "T12:00:00");
+  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(d);
+}
+function somaDias(iso, n) {
+  const d = new Date(iso + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  return new Intl.DateTimeFormat("sv-SE").format(d);
+}
+function fechado(ref) { return agoraHM() >= CONFIG.prazos[ref]; }
+function escapar(s = "") {
+  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+function aviso(msg) {
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("ver");
+  clearTimeout(aviso._t); aviso._t = setTimeout(() => t.classList.remove("ver"), 2800);
+}
+function idDispositivo() {
+  let id = guardado.get("qtn_dispositivo");
+  if (!id) { id = "d" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); guardado.set("qtn_dispositivo", id); }
+  return id;
+}
+const idPedido = (ref, dispositivo) => `${hojeISO()}_${ref}_${dispositivo}`;
+
+/* --------- senha: PBKDF2. A senha em si nunca é guardada --------- */
+const ITER = 210000;
+const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const deB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+async function derivar(senha, salt, iter = ITER) {
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(senha), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: deB64(salt), iterations: iter, hash: "SHA-256" }, k, 256);
+  return b64(bits);
+}
+async function criarSenha(senha) {
+  const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+  return { salt, hash: await derivar(senha, salt), iter: ITER };
+}
+async function conferirSenha(senha, u) {
+  if (!u || !u.hash) return false;
+  return (await derivar(senha, u.salt, u.iter || ITER)) === u.hash;
+}
+
+/* =====================================================================
+   3) Onde os dados ficam
+   ===================================================================== */
+let banco = null, modoLocal = true;
+
+async function bancoFirebase() {
+  if (!firebaseConfig.projectId) return null;
+  const [{ initializeApp }, A, F] = await Promise.all([
+    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
+    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"),
+  ]);
+  const app = initializeApp(firebaseConfig);
+  const auth = A.getAuth(app);
+  const db = F.getFirestore(app);
+  const equipe = F.collection(db, "equipe");
+  const pedidos = F.collection(db, "pedidos");
+
+  return {
+    async pronto() {
+      await new Promise((r) => { const off = A.onAuthStateChanged(auth, () => { off(); r(); }); });
+      if (!auth.currentUser) await A.signInAnonymously(auth);
+      // primeira vez que o app roda neste projeto: cria o admin inicial
+      const existentes = await F.getDocs(equipe);
+      if (existentes.empty) {
+        const s = await criarSenha("Tuleco4.0");
+        await F.setDoc(F.doc(equipe, "admin"), { usuario: "admin", nome: "Administrador", admin: true, ...s });
+      }
+    },
+    async lerEquipe(id) { const d = await F.getDoc(F.doc(equipe, id)); return d.exists() ? d.data() : null; },
+    observarEquipe(cb) { return F.onSnapshot(equipe, (s) => cb(s.docs.map((d) => d.data()))); },
+    async salvarEquipe(u) { await F.setDoc(F.doc(equipe, u.usuario), u, { merge: true }); },
+    async apagarEquipe(id) { await F.deleteDoc(F.doc(equipe, id)); },
+
+    observarSetores(cb) { cb(CONFIG.setores); return () => {}; },
+
+    observarDia(cb) {
+      return F.onSnapshot(F.query(pedidos, F.where("data", "==", hojeISO())), (s) => cb(s.docs.map((d) => d.data())));
+    },
+    async lerPeriodo(inicio, fim) {
+      const s = await F.getDocs(F.query(pedidos, F.where("data", ">=", inicio), F.where("data", "<=", fim)));
+      return s.docs.map((d) => d.data());
+    },
+    async salvarPedido(p) { await F.setDoc(F.doc(pedidos, p.id), p); },
+    async apagarPedido(id) { await F.deleteDoc(F.doc(pedidos, id)); },
+    async marcarEntregue(id, v) { await F.updateDoc(F.doc(pedidos, id), { entregue: v }); },
+  };
+}
+
+function bancoLocal() {
+  const ler = (k, d = "[]") => { try { return JSON.parse(guardado.get(k, d)); } catch { return JSON.parse(d); } };
+  const gravar = (k, v) => guardado.set(k, JSON.stringify(v));
+  const ouvintes = { equipe: new Set(), dia: new Set() };
+  const avisar = (grupo, ...args) => ouvintes[grupo].forEach((f) => f(...args));
+
+  return {
+    async pronto() {
+      if (!ler("qtn_equipe").length) {
+        const s = await criarSenha("Tuleco4.0");
+        gravar("qtn_equipe", [{ usuario: "admin", nome: "Administrador", admin: true, ...s }]);
+      }
+    },
+    async lerEquipe(id) { return ler("qtn_equipe").find((u) => u.usuario === id) || null; },
+    observarEquipe(cb) { ouvintes.equipe.add(cb); cb(ler("qtn_equipe")); return () => ouvintes.equipe.delete(cb); },
+    async salvarEquipe(u) {
+      const l = ler("qtn_equipe"); const i = l.findIndex((x) => x.usuario === u.usuario);
+      if (i >= 0) l[i] = { ...l[i], ...u }; else l.push(u);
+      gravar("qtn_equipe", l); avisar("equipe", l);
+    },
+    async apagarEquipe(id) { const l = ler("qtn_equipe").filter((u) => u.usuario !== id); gravar("qtn_equipe", l); avisar("equipe", l); },
+
+    observarSetores(cb) { cb(CONFIG.setores); return () => {}; },
+
+    observarDia(cb) {
+      const f = () => cb(ler("qtn_pedidos").filter((p) => p.data === hojeISO()));
+      ouvintes.dia.add(f); f(); return () => ouvintes.dia.delete(f);
+    },
+    async lerPeriodo(inicio, fim) { return ler("qtn_pedidos").filter((p) => p.data >= inicio && p.data <= fim); },
+    async salvarPedido(p) { const l = ler("qtn_pedidos").filter((x) => x.id !== p.id); l.push(p); gravar("qtn_pedidos", l); avisar("dia"); },
+    async apagarPedido(id) { gravar("qtn_pedidos", ler("qtn_pedidos").filter((p) => p.id !== id)); avisar("dia"); },
+    async marcarEntregue(id, v) { const l = ler("qtn_pedidos"); const p = l.find((x) => x.id === id); if (p) { p.entregue = v; gravar("qtn_pedidos", l); avisar("dia"); } },
+  };
+}
+
+/* =====================================================================
+   4) Pedido do dia (sem login)
+   ===================================================================== */
+let refSel = null, pedidoAtual = {}, setores = [];
+let desinscrever = [];
+const off = (fn) => desinscrever.push(fn);
+
+function montarTelaPedido() {
+  $("#dataTopo").textContent = dataLonga(hojeISO());
+  $("#nome").value = guardado.get("qtn_nome", "");
+  setores = CONFIG.setores;
+  const salvoSetor = guardado.get("qtn_setor", "");
+  $("#setor").innerHTML = `<option value="" disabled selected>Escolha o setor</option>` +
+    setores.map((s) => `<option ${s === salvoSetor ? "selected" : ""}>${escapar(s)}</option>`).join("");
+  atualizarRefeicoesPublico();
+  off(banco.observarDia((lista) => { pedidoAtual = Object.fromEntries(REFEICOES_KEYS.map((r) => [r, lista.find((p) => p.usuario_dispositivo === idDispositivo() && p.refeicao === r)])); desenharFicha(); }));
+  setInterval(atualizarRefeicoesPublico, 20000);
+}
+const REFEICOES_KEYS = Object.keys(REFEICOES);
+
+function atualizarRefeicoesPublico() {
+  $$("#formPedido .ref").forEach((b) => {
+    const r = b.dataset.ref, bloq = fechado(r);
+    b.disabled = bloq;
+    b.querySelector("small").textContent = bloq ? `encerrado às ${CONFIG.prazos[r]}` : `até ${CONFIG.prazos[r]}`;
+    if (bloq && refSel === r) { refSel = null; b.setAttribute("aria-pressed", "false"); }
+  });
+  atualizarBotaoEnviar();
+}
+
+function escolherRefeicao(r) {
+  if (fechado(r)) return;
+  refSel = r;
+  $$("#formPedido .ref").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ref === r)));
+  atualizarBotaoEnviar();
+}
+
+function atualizarBotaoEnviar() {
+  const b = $("#btnEnviar");
+  if (!refSel) { b.disabled = true; b.textContent = "Escolha a refeição"; return; }
+  b.disabled = false; b.textContent = `Confirmar ${REFEICOES[refSel].toLowerCase()}`;
+}
+
+function desenharFicha() {
+  const box = $("#fichaBox"), form = $("#formPedido");
+  const pedidoExistente = REFEICOES_KEYS.map((r) => pedidoAtual[r]).find(Boolean);
+
+  if (!pedidoExistente) { box.classList.add("oculto"); form.classList.remove("oculto"); return; }
+
+  form.classList.add("oculto"); box.classList.remove("oculto");
+  const linhas = REFEICOES_KEYS.filter((r) => pedidoAtual[r]).map((r) => {
+    const p = pedidoAtual[r]; const bloq = fechado(r);
+    return `
+      <div class="ficha">
+        <div class="ficha-topo"><span>${REFEICOES[r]} confirmado</span><span>${escapar(p.hora)}</span></div>
+        <div class="ficha-corpo">
+          <div class="ficha-selo">✓</div>
+          <div><h2>${escapar(p.nome)}</h2><p>${escapar(p.setor)}</p></div>
+        </div>
+        <div class="picote"></div>
+        <div class="ficha-pe">
+          ${bloq
+            ? `<p style="margin:0;font-size:14px;color:var(--tinta-fraca)">Prazo encerrado. O motorista já está com a lista.</p>`
+            : `<button type="button" class="btn btn-perigo" data-cancelar="${r}">Cancelar ${REFEICOES[r].toLowerCase()}</button>`}
+        </div>
+      </div>`;
+  }).join("");
+
+  const outraRef = REFEICOES_KEYS.find((r) => !pedidoAtual[r] && !fechado(r));
+  box.innerHTML = linhas + (outraRef
+    ? `<p class="rodape" style="margin-top:-4px"><button type="button" id="pedirOutra">Pedir também o ${REFEICOES[outraRef].toLowerCase()}</button></p>`
+    : "");
+
+  $$("[data-cancelar]").forEach((b) => b.onclick = async () => {
+    const r = b.dataset.cancelar;
+    if (!confirm(`Cancelar o ${REFEICOES[r].toLowerCase()} de hoje?`)) return;
+    await banco.apagarPedido(pedidoAtual[r].id);
+    aviso("Pedido cancelado");
+  });
+  const po = $("#pedirOutra");
+  if (po) po.onclick = () => { box.classList.add("oculto"); form.classList.remove("oculto"); escolherRefeicao(outraRef); };
+}
+
+async function enviarPedido(e) {
+  e.preventDefault();
+  const nome = $("#nome").value.trim();
+  const setor = $("#setor").value;
+  if (!nome) { $("#nome").focus(); aviso("Digite seu nome"); return; }
+  if (!setor) { $("#setor").focus(); aviso("Escolha o setor"); return; }
+  if (!refSel || fechado(refSel)) { aviso("Escolha uma refeição em aberto"); atualizarRefeicoesPublico(); return; }
+
+  guardado.set("qtn_nome", nome); guardado.set("qtn_setor", setor);
+  const p = {
+    id: idPedido(refSel, idDispositivo()), data: hojeISO(), refeicao: refSel,
+    nome, setor, hora: agoraHM(), entregue: false, usuario_dispositivo: idDispositivo(),
+  };
+  const b = $("#btnEnviar"); b.disabled = true; b.textContent = "Enviando…";
+  try { await banco.salvarPedido(p); aviso("Pedido confirmado"); }
+  catch (err) { console.error(err); aviso("Não deu para enviar. Tente de novo."); atualizarBotaoEnviar(); }
+}
+
+/* =====================================================================
+   5) Login e sessão da equipe
+   ===================================================================== */
+let eu = null;
+
+async function entrar(e) {
+  e.preventDefault();
+  const usuario = $("#usuario").value.trim().toLowerCase();
+  const senha = $("#senha").value;
+  if (!usuario || !senha) return;
+  const b = $("#btnEntrar"); b.disabled = true; b.textContent = "Entrando…";
+  try {
+    const u = await banco.lerEquipe(usuario);
+    if (!u || !(await conferirSenha(senha, u))) { aviso("Usuário ou senha não conferem"); return; }
+    eu = { usuario: u.usuario, nome: u.nome, admin: !!u.admin };
+    guardado.set("qtn_sessao_equipe", JSON.stringify(eu));
+    $("#senha").value = "";
+    abrirAreaEquipe();
+  } catch (err) { console.error(err); aviso("Não foi possível entrar"); }
+  finally { b.disabled = false; b.textContent = "Entrar"; }
+}
+
+function sair() {
+  guardado.del("qtn_sessao_equipe");
+  eu = null;
+  desligarEquipe();
+  $("#appEquipe").classList.add("oculto");
+  $("#telaLogin").classList.add("oculto");
+  $("#telaPedido").classList.remove("oculto");
+  $("#usuario").value = ""; $("#senha").value = "";
+  scrollTo({ top: 0 });
+}
+
+let desinscreverEquipe = [];
+function desligarEquipe() { desinscreverEquipe.forEach((f) => { try { f(); } catch {} }); desinscreverEquipe = []; }
+
+/* =====================================================================
+   6) Painel do motorista
+   ===================================================================== */
+let pRef = "almoco", pedidosHoje = [];
+
+function abrirPainel() {
+  $("#painelData").textContent = dataLonga(hojeISO());
+  pRef = fechado("almoco") && !fechado("janta") ? "janta" : "almoco";
+  $$(".pref").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ref === pRef)));
+  desinscreverEquipe.push(banco.observarDia((l) => { pedidosHoje = l; desenharPainel(); }));
+}
+const daRefeicao = () => pedidosHoje.filter((p) => p.refeicao === pRef);
+const agrupar = (l, f) => l.reduce((m, p) => { const k = f(p); (m[k] ||= []).push(p); return m; }, {});
+
+function desenharPainel() {
+  const lista = daRefeicao();
+  const total = lista.length;
+
+  $("#prefAlmoco").textContent = `${pedidosHoje.filter((p) => p.refeicao === "almoco").length} pedidos`;
+  $("#prefJanta").textContent = `${pedidosHoje.filter((p) => p.refeicao === "janta").length} pedidos`;
+  $("#totalNum").textContent = total;
+  $("#totalLabel").textContent = `${total === 1 ? "marmita" : "marmitas"} · ${REFEICOES[pRef].toLowerCase()} de hoje`;
+
+  let risco = "";
+  for (let i = 0; i < Math.floor(total / 5); i++) risco += `<span class="grupo cheio"><i></i><i></i><i></i><i></i></span>`;
+  if (total % 5) risco += `<span class="grupo">${"<i></i>".repeat(total % 5)}</span>`;
+  $("#risco").innerHTML = risco;
+
+  const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
+  const chaves = Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  $("#porSetor").innerHTML = chaves.length
+    ? chaves.map((s) => `<div class="tab"><span>${escapar(s)}</span><b>${porSetor[s].length}</b></div>`).join("")
+    : `<p class="vazio">Ninguém pediu ainda.</p>`;
+
+  const entregues = lista.filter((p) => p.entregue).length;
+  $("#progresso").textContent = total ? `${entregues} de ${total} entregues` : "";
+
+  $("#listaEntrega").innerHTML = lista.length
+    ? chaves.map((s) => `
+        <div class="grupo-setor">${escapar(s)} · ${porSetor[s].length}</div>
+        ${porSetor[s].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).map((p) => `
+          <div class="item ${p.entregue ? "pronto" : ""}">
+            <button type="button" class="marcar" data-id="${escapar(p.id)}" aria-pressed="${!!p.entregue}" aria-label="Marcar como entregue">✓</button>
+            <div class="item-info">
+              <div class="item-nome">${escapar(p.nome)}</div>
+              <div class="item-sub">pediu ${escapar(p.hora)}</div>
+            </div>
+          </div>`).join("")}`).join("")
+    : `<p class="vazio">Nenhum pedido para esta refeição.</p>`;
+
+  $$("#listaEntrega .marcar").forEach((b) => b.onclick = () => banco.marcarEntregue(b.dataset.id, b.getAttribute("aria-pressed") !== "true"));
+}
+
+function textoResumo() {
+  const lista = daRefeicao();
+  const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
+  const linhas = [`*Marmitas — ${REFEICOES[pRef]} de ${dataLonga(hojeISO())}*`, `*TOTAL: ${lista.length}*`, ""];
+  Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((s) => {
+    linhas.push(`*${s} — ${porSetor[s].length}*`);
+    porSetor[s].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).forEach((p) => linhas.push(`  ${p.nome}`));
+  });
+  return linhas.join("\n");
+}
+
+/* =====================================================================
+   7) Histórico — relatório por período
+   ===================================================================== */
+let ultimoHistorico = [];
+
+function abrirHistorico() {
+  if (!$("#hIni").value) $("#hIni").value = somaDias(hojeISO(), -6);
+  if (!$("#hFim").value) $("#hFim").value = hojeISO();
+  $("#hIni").max = hojeISO(); $("#hFim").max = hojeISO();
+}
+
+async function buscarHistorico(e) {
+  e.preventDefault();
+  const inicio = $("#hIni").value, fim = $("#hFim").value;
+  if (!inicio || !fim) return;
+  if (inicio > fim) { aviso("A data \"De\" precisa vir antes da data \"Até\""); return; }
+
+  const b = $("#btnBuscarHistorico"); b.disabled = true; b.textContent = "Buscando…";
+  try {
+    ultimoHistorico = await banco.lerPeriodo(inicio, fim);
+    desenharHistorico(inicio, fim);
+  } catch (err) { console.error(err); aviso("Não deu para buscar o histórico"); }
+  finally { b.disabled = false; b.textContent = "Buscar"; }
+}
+
+function desenharHistorico(inicio, fim) {
+  const lista = ultimoHistorico;
+  $("#resultadoHistorico").classList.toggle("oculto", lista.length === 0);
+  $("#hVazio").classList.toggle("oculto", lista.length > 0);
+  if (!lista.length) return;
+
+  $("#hTotalNum").textContent = lista.length;
+  $("#hTotalLabel").textContent = `marmitas · ${dataCurtaBR(inicio)} a ${dataCurtaBR(fim)}`;
+
+  const porRefeicao = agrupar(lista, (p) => p.refeicao);
+  $("#hPorRefeicao").innerHTML = Object.keys(REFEICOES).map((r) =>
+    `<div class="tab"><span>${REFEICOES[r]}</span><b>${(porRefeicao[r] || []).length}</b></div>`).join("");
+
+  const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
+  $("#hPorSetor").innerHTML = Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR"))
+    .map((s) => `<div class="tab"><span>${escapar(s)}</span><b>${porSetor[s].length}</b></div>`).join("");
+
+  const porDia = agrupar(lista, (p) => p.data);
+  $("#hPorDia").innerHTML = Object.keys(porDia).sort().reverse().map((d) => {
+    const doDia = porDia[d];
+    const almoco = doDia.filter((p) => p.refeicao === "almoco").length;
+    const janta = doDia.filter((p) => p.refeicao === "janta").length;
+    return `<div class="tab"><span>${dataLonga(d)}</span><b>${almoco} almoço · ${janta} janta</b></div>`;
+  }).join("");
+}
+
+function exportarCsv() {
+  if (!ultimoHistorico.length) return;
+  const linhas = [["data", "refeicao", "nome", "setor", "hora", "entregue"]];
+  [...ultimoHistorico].sort((a, b) => (a.data + a.refeicao).localeCompare(b.data + b.refeicao))
+    .forEach((p) => linhas.push([p.data, REFEICOES[p.refeicao] || p.refeicao, p.nome, p.setor || "", p.hora, p.entregue ? "sim" : "não"]));
+  const csv = linhas.map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `marmitas_${$("#hIni").value}_a_${$("#hFim").value}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* =====================================================================
+   8) Administração — equipe e setores
+   ===================================================================== */
+let equipe = [];
+
+function abrirAdmin() {
+  desinscreverEquipe.push(banco.observarEquipe((l) => { equipe = l; desenharEquipe(); }));
+}
+
+function desenharEquipe() {
+  const l = [...equipe].sort((a, b) => (a.nome || a.usuario).localeCompare(b.nome || b.usuario, "pt-BR"));
+  $("#listaEquipe").innerHTML = l.length
+    ? l.map((u) => `
+        <div class="item">
+          <div class="item-info">
+            <div class="item-nome">${escapar(u.nome || u.usuario)}${u.admin ? '<span class="cracha">Admin</span>' : ""}</div>
+            <div class="item-sub">${escapar(u.usuario)}</div>
+          </div>
+          <button type="button" class="btn btn-2 btn-mini" data-editar="${escapar(u.usuario)}">Editar</button>
+        </div>`).join("")
+    : `<p class="vazio">Ninguém cadastrado ainda.</p>`;
+  $$("#listaEquipe [data-editar]").forEach((b) => b.onclick = () => editarEquipe(b.dataset.editar));
+}
+
+function editarEquipe(id) {
+  const u = equipe.find((x) => x.usuario === id); if (!u) return;
+  $("#eEditando").value = id;
+  $("#eUsuario").value = u.usuario; $("#eUsuario").disabled = true;
+  $("#eNome").value = u.nome || ""; $("#eAdmin").checked = !!u.admin;
+  $("#eSenha").value = "";
+  $("#eSenhaDica").textContent = "— em branco mantém a atual";
+  $("#tituloFormEquipe").textContent = "Editando " + u.usuario;
+  $("#btnSalvarEquipe").textContent = "Salvar alterações";
+  $("#botoesEdicaoEquipe").classList.remove("oculto");
+  $("#eNome").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function limparFormEquipe() {
+  $("#formEquipe").reset();
+  $("#eEditando").value = ""; $("#eUsuario").disabled = false;
+  $("#eSenhaDica").textContent = "";
+  $("#tituloFormEquipe").textContent = "Cadastrar motorista ou administrador";
+  $("#btnSalvarEquipe").textContent = "Cadastrar";
+  $("#botoesEdicaoEquipe").classList.add("oculto");
+}
+
+async function salvarEquipe(e) {
+  e.preventDefault();
+  const editando = $("#eEditando").value;
+  const usuario = $("#eUsuario").value.trim().toLowerCase().replace(/\s+/g, "");
+  const nome = $("#eNome").value.trim();
+  const senha = $("#eSenha").value;
+  const admin = $("#eAdmin").checked;
+
+  if (!usuario || !nome) { aviso("Usuário e nome são obrigatórios"); return; }
+  if (!editando && equipe.some((u) => u.usuario === usuario)) { aviso("Esse usuário já existe"); return; }
+  if ((!editando || senha) && senha.length < 6) { aviso("A senha precisa de 6 caracteres ou mais"); return; }
+
+  const dados = { usuario, nome, admin };
+  if (senha) Object.assign(dados, await criarSenha(senha));
+
+  const b = $("#btnSalvarEquipe"); b.disabled = true;
+  try {
+    await banco.salvarEquipe(dados);
+    aviso(editando ? "Alterações salvas" : `${nome} cadastrado`);
+    limparFormEquipe();
+  } catch (err) { console.error(err); aviso("Não deu para salvar"); }
+  finally { b.disabled = false; }
+}
+
+async function removerEquipe() {
+  const id = $("#eEditando").value; if (!id) return;
+  if (id === eu.usuario) { aviso("Você não pode remover a si mesmo"); return; }
+  if (!confirm(`Remover ${id}?`)) return;
+  try { await banco.apagarEquipe(id); limparFormEquipe(); aviso("Removido"); }
+  catch { aviso("Não deu para remover"); }
+}
+
+
+
+/* =====================================================================
+   9) Navegação
+   ===================================================================== */
+function irParaLogin() {
+  $("#telaPedido").classList.add("oculto");
+  $("#telaLogin").classList.remove("oculto");
+  scrollTo({ top: 0 });
+}
+function irParaAba(tela) {
+  $("#telaPainel").classList.toggle("oculto", tela !== "painel");
+  $("#telaHistorico").classList.toggle("oculto", tela !== "historico");
+  $("#telaAdmin").classList.toggle("oculto", tela !== "admin");
+  $$("nav.abas button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tela === tela)));
+  scrollTo({ top: 0 });
+  if (tela === "painel") abrirPainel();
+  if (tela === "historico") abrirHistorico();
+  if (tela === "admin") abrirAdmin();
+}
+function abrirAreaEquipe() {
+  $("#telaPedido").classList.add("oculto");
+  $("#telaLogin").classList.add("oculto");
+  $("#appEquipe").classList.remove("oculto");
+  $("#euNome").textContent = eu.nome;
+  $("#abaAdmin").classList.toggle("oculto", !eu.admin);
+  irParaAba("painel");
+}
+
+function ligarEventos() {
+  $("#nomeUnidade").textContent = CONFIG.unidade;
+  $("#nomeUnidade2").textContent = CONFIG.unidade;
+  $$("#formPedido .ref").forEach((b) => b.onclick = () => escolherRefeicao(b.dataset.ref));
+  $("#formPedido").addEventListener("submit", enviarPedido);
+  $("#irEquipe").onclick = irParaLogin;
+
+  $("#formLogin").addEventListener("submit", entrar);
+  $("#voltarPedido").onclick = () => { $("#telaLogin").classList.add("oculto"); $("#telaPedido").classList.remove("oculto"); };
+  $("#btnSair").onclick = sair;
+
+  $$("nav.abas button").forEach((b) => b.onclick = () => irParaAba(b.dataset.tela));
+
+  $("#painelData"); // noop, mantém referência viva
+  $$(".pref").forEach((b) => b.onclick = () => { pRef = b.dataset.ref; $$(".pref").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.ref === pRef))); desenharPainel(); });
+  $("#btnWhats").onclick = () => open(`https://wa.me/${CONFIG.whatsappRancho.replace(/\D/g, "")}?text=${encodeURIComponent(textoResumo())}`, "_blank");
+  $("#btnCopiar").onclick = async () => { try { await navigator.clipboard.writeText(textoResumo()); aviso("Lista copiada"); } catch { prompt("Copie a lista:", textoResumo()); } };
+  $("#btnImprimir").onclick = () => print();
+
+  $("#formEquipe").addEventListener("submit", salvarEquipe);
+  $("#btnCancelarEquipe").onclick = limparFormEquipe;
+  $("#btnRemoverEquipe").onclick = removerEquipe;
+
+  $("#formHistorico").addEventListener("submit", buscarHistorico);
+  $("#btnExportarCsv").onclick = exportarCsv;
+  $("#btnImprimirHistorico").onclick = () => print();
+}
+
+/* =====================================================================
+   10) Início
+   ===================================================================== */
+(async function iniciar() {
+  ligarEventos();
+
+  try { const b = await bancoFirebase(); if (b) { banco = b; modoLocal = false; } }
+  catch (err) { console.warn("Firebase indisponível:", err); }
+
+  if (!banco) {
+    banco = bancoLocal();
+    $("#avisoModo").classList.remove("oculto");
+    $("#avisoModo").innerHTML = `<b>Modo de teste.</b> Os pedidos ficam só neste aparelho.
+      Área da equipe: <b>admin</b> / <b>Tuleco4.0</b>.
+      Para valer, preencha o <code>firebaseConfig</code> no arquivo.`;
+  }
+  await banco.pronto();
+
+  montarTelaPedido();
+
+  try {
+    const s = JSON.parse(guardado.get("qtn_sessao_equipe", "null"));
+    if (s?.usuario) {
+      const u = await banco.lerEquipe(s.usuario);
+      if (u) { eu = { usuario: u.usuario, nome: u.nome, admin: !!u.admin }; abrirAreaEquipe(); }
+    }
+  } catch {}
+
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>
