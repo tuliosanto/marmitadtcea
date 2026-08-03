@@ -164,9 +164,7 @@ select{appearance:none;-webkit-appearance:none;background-image:url('data:image/
 
       <div class="bloco">
         <p class="rotulo">Setor</p>
-        <select id="setor" required>
-          <option value="" disabled selected>Escolha o setor</option>
-        </select>
+        <div class="setores-grid" id="setoresGrid"></div>
       </div>
 
       <div class="bloco">
@@ -229,7 +227,8 @@ select{appearance:none;-webkit-appearance:none;background-image:url('data:image/
   </header>
   <nav class="abas">
     <div class="abas-in">
-      <button type="button" data-tela="painel" aria-selected="true">Painel</button>
+      <button type="button" data-tela="permanencia" aria-selected="true">Permanência</button>
+      <button type="button" data-tela="painel" aria-selected="false">Painel</button>
       <button type="button" data-tela="historico" aria-selected="false">Histórico</button>
       <button type="button" data-tela="admin" aria-selected="false" id="abaAdmin">Administração</button>
     </div>
@@ -237,8 +236,40 @@ select{appearance:none;-webkit-appearance:none;background-image:url('data:image/
 
   <main class="wrap">
 
+    <!-- ---------- PERMANÊNCIA ---------- -->
+    <section id="telaPermanencia">
+      <div class="bloco">
+        <p class="rotulo">Refeição</p>
+        <div class="refeicoes">
+          <button type="button" class="ref ppref" data-ref="almoco" aria-pressed="true"><b>Almoço</b><small id="pprefAlmoco"></small></button>
+          <button type="button" class="ref ppref" data-ref="janta" aria-pressed="false"><b>Janta</b><small id="pprefJanta"></small></button>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <p class="rotulo">Adicionar setor à lista</p>
+        <div class="setores-grid" id="setoresPermGrid"></div>
+        <div class="perm-controles" id="permControles" style="display:none">
+          <span class="setor-label" id="permSetorLabel">—</span>
+          <button type="button" class="qtd-btn" id="permMenos" aria-label="Diminuir">−</button>
+          <div class="qtd-num" id="permQtdNum">1</div>
+          <button type="button" class="qtd-btn" id="permMais" aria-label="Aumentar">+</button>
+          <button type="button" class="btn btn-2" style="width:auto;padding:12px 16px" id="permAdicionar">Adicionar</button>
+        </div>
+      </div>
+
+      <div id="listaPermBox" class="oculto">
+        <div class="bloco">
+          <p class="rotulo">Lista montada <span id="permTotal" style="float:right;letter-spacing:0;text-transform:none;font-size:13px;font-weight:700;color:var(--verde)"></span></p>
+          <div class="lista-perm" id="listaPerm"></div>
+        </div>
+        <button type="button" class="btn" id="btnEnviarPerm">Confirmar todos os pedidos</button>
+        <button type="button" class="btn btn-2" style="margin-top:8px" id="btnLimparPerm">Limpar lista</button>
+      </div>
+    </section>
+
     <!-- ---------- PAINEL DO MOTORISTA ---------- -->
-    <section id="telaPainel">
+    <section id="telaPainel" class="oculto">
       <div class="bloco">
         <p class="rotulo">Data e refeição</p>
         <p style="margin:0 0 10px;font-size:15px;font-weight:600" id="painelData"></p>
@@ -544,8 +575,15 @@ function montarTelaPedido() {
   $("#nome").value = guardado.get("qtn_nome", "");
   setores = CONFIG.setores;
   const salvoSetor = guardado.get("qtn_setor", "");
-  $("#setor").innerHTML = `<option value="" disabled selected>Escolha o setor</option>` +
-    setores.map((s) => `<option ${s === salvoSetor ? "selected" : ""}>${escapar(s)}</option>`).join("");
+  // grade de botões de setor (tela pública)
+  $("#setoresGrid").innerHTML = setores.map((s) =>
+    `<button type="button" class="setor-btn" data-setor="${escapar(s)}" aria-pressed="${s === salvoSetor}">${escapar(s)}</button>`).join("");
+  $("#setoresGrid").addEventListener("click", (e) => {
+    const b = e.target.closest(".setor-btn"); if (!b) return;
+    $$("#setoresGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+    atualizarBotaoEnviar();
+  });
   function passoQtd(d) {
     quantidade = Math.min(20, Math.max(1, quantidade + d));
     $("#qtdNum").textContent = quantidade;
@@ -582,7 +620,9 @@ function escolherRefeicao(r) {
 function atualizarBotaoEnviar() {
   const b = $("#btnEnviar");
   if (!refSel) { b.disabled = true; b.textContent = "Escolha a refeição"; return; }
-  b.disabled = false; b.textContent = `Confirmar ${REFEICOES[refSel].toLowerCase()}`;
+  const temSetor = !!($("#setoresGrid .setor-btn[aria-pressed=true]"));
+  b.disabled = !temSetor;
+  b.textContent = temSetor ? `Confirmar ${REFEICOES[refSel].toLowerCase()}` : "Escolha o setor";
 }
 
 function desenharFicha() {
@@ -635,9 +675,10 @@ function desenharFicha() {
 async function enviarPedido(e) {
   e.preventDefault();
   const nome = $("#nome").value.trim();
-  const setor = $("#setor").value;
+  const setorBtn = $("#setoresGrid .setor-btn[aria-pressed=true]");
+  const setor = setorBtn ? setorBtn.dataset.setor : "";
   if (!nome) { $("#nome").focus(); aviso("Digite seu nome"); return; }
-  if (!setor) { $("#setor").focus(); aviso("Escolha o setor"); return; }
+  if (!setor) { aviso("Escolha o setor"); return; }
   if (!refSel || fechado(refSel)) { aviso("Escolha uma refeição em aberto"); atualizarRefeicoesPublico(); return; }
 
   guardado.set("qtn_nome", nome); guardado.set("qtn_setor", setor);
@@ -685,6 +726,100 @@ function sair() {
 
 let desinscreverEquipe = [];
 function desligarEquipe() { desinscreverEquipe.forEach((f) => { try { f(); } catch {} }); desinscreverEquipe = []; }
+
+
+/* =====================================================================
+   6b) Permanência — monta lista ligando para os setores
+   ===================================================================== */
+let pPermRef = "almoco", listaPermMontada = [], permSetorSel = null, permQtd = 1;
+
+function abrirPermanencia() {
+  pPermRef = fechado("almoco") && !fechado("janta") ? "janta" : "almoco";
+  // garantir que pedidosHoje está sendo observado
+  if (!desinscreverEquipe.length) {
+    desinscreverEquipe.push(banco.observarDia((l) => { pedidosHoje = l; if (!$("#telaPermanencia").classList.contains("oculto")) atualizarPPermRef(); if (!$("#telaPainel").classList.contains("oculto")) desenharPainel(); }));
+  }
+  atualizarPPermRef();
+
+  // grade de setores
+  const grid = $("#setoresPermGrid");
+  grid.innerHTML = CONFIG.setores.map((s) =>
+    `<button type="button" class="setor-btn" data-setor="${escapar(s)}">${escapar(s)}</button>`
+  ).join("");
+  grid.addEventListener("click", (e) => {
+    const b = e.target.closest(".setor-btn"); if (!b) return;
+    $$("#setoresPermGrid .setor-btn").forEach((x) => x.classList.remove("aria-pressed"));
+    $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+    permSetorSel = b.dataset.setor;
+    $("#permSetorLabel").textContent = permSetorSel;
+    permQtd = 1; atualizarPermQtd();
+    $("#permControles").style.display = "flex";
+  });
+
+  listaPermMontada = [];
+  desenharListaPerm();
+}
+
+function atualizarPPermRef() {
+  $$(".ppref").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ref === pPermRef)));
+  const almTotal = pedidosHoje.filter((p) => p.refeicao === "almoco").length;
+  const janTotal = pedidosHoje.filter((p) => p.refeicao === "janta").length;
+  $("#pprefAlmoco").textContent = almTotal ? `${almTotal} pedido${almTotal===1?"":"s"} já confirmado${almTotal===1?"":"s"}` : fechado("almoco") ? "encerrado" : `até ${CONFIG.prazos.almoco}`;
+  $("#pprefJanta").textContent  = janTotal ? `${janTotal} pedido${janTotal===1?"":"s"} já confirmado${janTotal===1?"":"s"}` : fechado("janta")  ? "encerrado" : `até ${CONFIG.prazos.janta}`;
+}
+
+function atualizarPermQtd() {
+  $("#permQtdNum").textContent = permQtd;
+  $("#permMenos").disabled = permQtd <= 1;
+  $("#permMais").disabled = permQtd >= 20;
+}
+
+function desenharListaPerm() {
+  const box = $("#listaPermBox");
+  if (!listaPermMontada.length) { box.classList.add("oculto"); return; }
+  box.classList.remove("oculto");
+  const total = listaPermMontada.reduce((s, x) => s + x.qtd, 0);
+  $("#permTotal").textContent = `${total} marmita${total===1?"":"s"}`;
+  $("#listaPerm").innerHTML = listaPermMontada.map((x, i) => `
+    <div class="lista-perm-item">
+      <span class="lp-setor">${escapar(x.setor)}</span>
+      <span class="lp-qtd">${x.qtd}</span>
+      <button type="button" class="lp-del" data-idx="${i}" aria-label="Remover">×</button>
+    </div>`).join("");
+  $$("#listaPerm .lp-del").forEach((b) => b.onclick = () => {
+    listaPermMontada.splice(Number(b.dataset.idx), 1);
+    desenharListaPerm();
+  });
+}
+
+async function enviarListaPerm() {
+  if (!listaPermMontada.length) return;
+  if (fechado(pPermRef)) { aviso(`Prazo do ${REFEICOES[pPermRef].toLowerCase()} encerrado`); return; }
+  const b = $("#btnEnviarPerm"); b.disabled = true; b.textContent = "Enviando…";
+  try {
+    for (const item of listaPermMontada) {
+      const dispositivo = "perm_" + eu.usuario + "_" + item.setor.replace(/[^a-z0-9]/gi,"");
+      const p = {
+        id: idPedido(pPermRef, dispositivo),
+        data: hojeISO(), refeicao: pPermRef,
+        usuario: eu.usuario, nome: `${eu.nome} (${item.setor})`,
+        setor: item.setor, quantidade: item.qtd,
+        hora: agoraHM(), entregue: false,
+        usuario_dispositivo: dispositivo,
+        viaPermancia: true,
+      };
+      await banco.salvarPedido(p);
+    }
+    aviso(`${listaPermMontada.length} setor${listaPermMontada.length===1?"":"es"} confirmado${listaPermMontada.length===1?"":"s"}`);
+    listaPermMontada = [];
+    desenharListaPerm();
+    $("#permControles").style.display = "none";
+    $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
+    permSetorSel = null;
+  } catch (err) { console.error(err); aviso("Erro ao enviar. Tente de novo."); }
+  finally { b.disabled = false; b.textContent = "Confirmar todos os pedidos"; }
+}
 
 /* =====================================================================
    6) Painel do motorista
@@ -923,11 +1058,13 @@ function irParaLogin() {
   scrollTo({ top: 0 });
 }
 function irParaAba(tela) {
+  $("#telaPermanencia").classList.toggle("oculto", tela !== "permanencia");
   $("#telaPainel").classList.toggle("oculto", tela !== "painel");
   $("#telaHistorico").classList.toggle("oculto", tela !== "historico");
   $("#telaAdmin").classList.toggle("oculto", tela !== "admin");
   $$("nav.abas button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tela === tela)));
   scrollTo({ top: 0 });
+  if (tela === "permanencia") abrirPermanencia();
   if (tela === "painel") abrirPainel();
   if (tela === "historico") abrirHistorico();
   if (tela === "admin") abrirAdmin();
@@ -938,7 +1075,7 @@ function abrirAreaEquipe() {
   $("#appEquipe").classList.remove("oculto");
   $("#euNome").textContent = eu.nome;
   $("#abaAdmin").classList.toggle("oculto", !eu.admin);
-  irParaAba("painel");
+  irParaAba("permanencia");
 }
 
 function ligarEventos() {
@@ -964,6 +1101,23 @@ function ligarEventos() {
   $("#btnCancelarEquipe").onclick = limparFormEquipe;
   $("#btnRemoverEquipe").onclick = removerEquipe;
 
+  // permanência
+  $$(".ppref").forEach((b) => b.onclick = () => { pPermRef = b.dataset.ref; atualizarPPermRef(); });
+  $("#permMenos").onclick = () => { permQtd = Math.max(1, permQtd-1); atualizarPermQtd(); };
+  $("#permMais").onclick  = () => { permQtd = Math.min(20, permQtd+1); atualizarPermQtd(); };
+  $("#permAdicionar").onclick = () => {
+    if (!permSetorSel) return;
+    const idx = listaPermMontada.findIndex((x) => x.setor === permSetorSel);
+    if (idx >= 0) listaPermMontada[idx].qtd = permQtd;
+    else listaPermMontada.push({ setor: permSetorSel, qtd: permQtd });
+    desenharListaPerm();
+    // limpar seleção do setor
+    $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed","false"));
+    permSetorSel = null; $("#permControles").style.display = "none";
+  };
+  $("#btnEnviarPerm").onclick = enviarListaPerm;
+  $("#btnLimparPerm").onclick = () => { listaPermMontada = []; desenharListaPerm(); };
+  // histórico
   $("#formHistorico").addEventListener("submit", buscarHistorico);
   $("#btnExportarCsv").onclick = exportarCsv;
   $("#btnImprimirHistorico").onclick = () => print();
