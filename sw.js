@@ -1,6 +1,6 @@
 // Service worker enxuto: guarda a casca do app para abrir rápido e offline.
 // Troque a versão sempre que atualizar o index.html.
-const VERSAO = "marmita-v6";
+const VERSAO = "marmita-v7";
 const CASCA = ["./", "./index.html", "./manifest.json", "./icone-192.png", "./icone-512.png", "./config.js", "./logo.png"];
 
 self.addEventListener("install", (e) => {
