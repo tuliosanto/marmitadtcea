@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Marmita">
+<meta name="apple-mobile-web-app-title" content="Pedidos de Marmita">
 <link rel="apple-touch-icon" href="icone-180.png">
 <style>
 :root{
@@ -113,6 +113,12 @@ select{appearance:none;-webkit-appearance:none;background-image:url('data:image/
 
 .cracha{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:5px;background:var(--escuro);color:#fff;margin-left:6px;vertical-align:1px}
 
+.qtd{display:flex;align-items:center;gap:16px;justify-content:center;margin-top:4px}
+.qtd-btn{width:52px;height:52px;border-radius:12px;border:1.5px solid var(--linha);background:#fff;font-size:28px;font-weight:700;color:var(--verde);cursor:pointer;line-height:1;flex:0 0 auto}
+.qtd-btn:active{background:var(--verde-claro)}
+.qtd-btn:disabled{opacity:.35;cursor:default}
+.qtd-num{font-size:38px;font-weight:800;min-width:52px;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-.04em;color:var(--tinta)}
+.item-qtd{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--verde);flex:0 0 auto}
 .aviso{border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:12px;border:1.5px solid}
 .aviso-amarelo{background:#FFF8E1;border-color:#F0DCA0;color:#6B5300}
 .aviso-erro{background:#FDEDE8;border-color:#E8C9C1;color:#8E2C15}
@@ -168,6 +174,15 @@ select{appearance:none;-webkit-appearance:none;background-image:url('data:image/
         <div class="refeicoes">
           <button type="button" class="ref" data-ref="almoco" aria-pressed="false"><b>Almoço</b><small></small></button>
           <button type="button" class="ref" data-ref="janta" aria-pressed="false"><b>Janta</b><small></small></button>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <p class="rotulo">Quantidade de marmitas</p>
+        <div class="qtd">
+          <button type="button" class="qtd-btn" id="qtdMenos" aria-label="Diminuir" disabled>−</button>
+          <div class="qtd-num" id="qtdNum">1</div>
+          <button type="button" class="qtd-btn" id="qtdMais" aria-label="Aumentar">+</button>
         </div>
       </div>
 
@@ -239,7 +254,7 @@ select{appearance:none;-webkit-appearance:none;background-image:url('data:image/
         <div class="risco" id="risco"></div>
       </div>
 
-      <button type="button" class="btn" id="btnWhats">Mandar o pedido pelo WhatsApp</button>
+      <button type="button" class="btn" id="btnWhats">Enviar lista pelo WhatsApp</button>
       <div class="linha-btn">
         <button type="button" class="btn btn-2" id="btnCopiar">Copiar lista</button>
         <button type="button" class="btn btn-2" id="btnImprimir">Imprimir</button>
@@ -349,6 +364,7 @@ select{appearance:none;-webkit-appearance:none;background-image:url('data:image/
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="config.js"></script>
 <script type="module">
 /* =====================================================================
    1) CONFIGURAÇÃO — o que se ajusta no dia a dia
@@ -357,20 +373,15 @@ const CONFIG = {
   unidade: "Pedidos de",   // texto pequeno acima de "Marmita" no cabeçalho
   fusoHorario: "America/Sao_Paulo",
   prazos: { almoco: "09:45", janta: "15:30" },
-  whatsappRancho: "5551999999999",   // 55 + DDD + número, só dígitos
+  whatsappContato: "5551999999999",  // número do responsável pelos pedidos: 55 + DDD + nº, só dígitos
   setores: ["APP", "EMA", "SMSA", "SMSO", "SMST", "TWR/EMS"],  // fixos — edite aqui se precisar alterar
 };
 
 /* Firebase: em branco = modo de teste (tudo fica só neste aparelho).
    Preenchido = todos veem a mesma lista, ao vivo. Veja o LEIA-ME.md. */
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhYr2ZBpQ-OVdM8u9NbXzMBTsX6ztj_hk",
-      authDomain: "marmitas-dtceasm.firebaseapp.com",
-      projectId: "marmitas-dtceasm",
-      storageBucket: "marmitas-dtceasm.firebasestorage.app",
-      messagingSenderId: "639383948380",
-      appId: "1:639383948380:web:5660d7919f193c7ed8ea99"
-    };
+// As credenciais do Firebase ficam em config.js (não versionado).
+// Se config.js não existir, o app roda em modo local de teste.
+const firebaseConfig = (typeof __FIREBASE_CONFIG__ !== "undefined") ? __FIREBASE_CONFIG__ : {};
 
 const REFEICOES = { almoco: "Almoço", janta: "Janta" };
 
@@ -524,7 +535,7 @@ function bancoLocal() {
 /* =====================================================================
    4) Pedido do dia (sem login)
    ===================================================================== */
-let refSel = null, pedidoAtual = {}, setores = [];
+let refSel = null, pedidoAtual = {}, setores = [], quantidade = 1;
 let desinscrever = [];
 const off = (fn) => desinscrever.push(fn);
 
@@ -535,6 +546,16 @@ function montarTelaPedido() {
   const salvoSetor = guardado.get("qtn_setor", "");
   $("#setor").innerHTML = `<option value="" disabled selected>Escolha o setor</option>` +
     setores.map((s) => `<option ${s === salvoSetor ? "selected" : ""}>${escapar(s)}</option>`).join("");
+  function passoQtd(d) {
+    quantidade = Math.min(20, Math.max(1, quantidade + d));
+    $("#qtdNum").textContent = quantidade;
+    $("#qtdMenos").disabled = quantidade <= 1;
+    $("#qtdMais").disabled = quantidade >= 20;
+  }
+  $("#qtdMenos").onclick = () => passoQtd(-1);
+  $("#qtdMais").onclick  = () => passoQtd(1);
+  quantidade = 1; passoQtd(0);
+
   atualizarRefeicoesPublico();
   off(banco.observarDia((lista) => { pedidoAtual = Object.fromEntries(REFEICOES_KEYS.map((r) => [r, lista.find((p) => p.usuario_dispositivo === idDispositivo() && p.refeicao === r)])); desenharFicha(); }));
   setInterval(atualizarRefeicoesPublico, 20000);
@@ -577,8 +598,11 @@ function desenharFicha() {
       <div class="ficha">
         <div class="ficha-topo"><span>${REFEICOES[r]} confirmado</span><span>${escapar(p.hora)}</span></div>
         <div class="ficha-corpo">
-          <div class="ficha-selo">✓</div>
-          <div><h2>${escapar(p.nome)}</h2><p>${escapar(p.setor)}</p></div>
+          <div class="ficha-selo">${p.quantidade > 1 ? p.quantidade : "✓"}</div>
+          <div>
+            <h2>${escapar(p.nome)}</h2>
+            <p>${escapar(p.setor)}${p.quantidade > 1 ? ` · <b>${p.quantidade} marmitas</b>` : ""}</p>
+          </div>
         </div>
         <div class="picote"></div>
         <div class="ficha-pe">
@@ -601,7 +625,11 @@ function desenharFicha() {
     aviso("Pedido cancelado");
   });
   const po = $("#pedirOutra");
-  if (po) po.onclick = () => { box.classList.add("oculto"); form.classList.remove("oculto"); escolherRefeicao(outraRef); };
+  if (po) po.onclick = () => {
+    quantidade = 1;
+    const q = $("#qtdNum"); if(q){ q.textContent = 1; $("#qtdMenos").disabled = true; $("#qtdMais").disabled = false; }
+    box.classList.add("oculto"); form.classList.remove("oculto"); escolherRefeicao(outraRef);
+  };
 }
 
 async function enviarPedido(e) {
@@ -615,7 +643,7 @@ async function enviarPedido(e) {
   guardado.set("qtn_nome", nome); guardado.set("qtn_setor", setor);
   const p = {
     id: idPedido(refSel, idDispositivo()), data: hojeISO(), refeicao: refSel,
-    nome, setor, hora: agoraHM(), entregue: false, usuario_dispositivo: idDispositivo(),
+    nome, setor, quantidade, hora: agoraHM(), entregue: false, usuario_dispositivo: idDispositivo(),
   };
   const b = $("#btnEnviar"); b.disabled = true; b.textContent = "Enviando…";
   try { await banco.salvarPedido(p); aviso("Pedido confirmado"); }
@@ -674,10 +702,15 @@ const agrupar = (l, f) => l.reduce((m, p) => { const k = f(p); (m[k] ||= []).pus
 
 function desenharPainel() {
   const lista = daRefeicao();
-  const total = lista.length;
+  const soma = (l) => l.reduce((s,p) => s + (Number(p.quantidade)||1), 0);
+  const total = soma(lista);
 
-  $("#prefAlmoco").textContent = `${pedidosHoje.filter((p) => p.refeicao === "almoco").length} pedidos`;
-  $("#prefJanta").textContent = `${pedidosHoje.filter((p) => p.refeicao === "janta").length} pedidos`;
+  const totalAlmoco = soma(pedidosHoje.filter((p) => p.refeicao === "almoco"));
+  const totalJanta  = soma(pedidosHoje.filter((p) => p.refeicao === "janta"));
+  const pedsAlmoco  = pedidosHoje.filter((p) => p.refeicao === "almoco").length;
+  const pedsJanta   = pedidosHoje.filter((p) => p.refeicao === "janta").length;
+  $("#prefAlmoco").textContent = `${totalAlmoco} marmita${totalAlmoco===1?"":"s"} (${pedsAlmoco} pedido${pedsAlmoco===1?"":"s"})`;
+  $("#prefJanta").textContent  = `${totalJanta}  marmita${totalJanta===1?"":"s"} (${pedsJanta} pedido${pedsJanta===1?"":"s"})`;
   $("#totalNum").textContent = total;
   $("#totalLabel").textContent = `${total === 1 ? "marmita" : "marmitas"} · ${REFEICOES[pRef].toLowerCase()} de hoje`;
 
@@ -689,21 +722,25 @@ function desenharPainel() {
   const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
   const chaves = Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR"));
   $("#porSetor").innerHTML = chaves.length
-    ? chaves.map((s) => `<div class="tab"><span>${escapar(s)}</span><b>${porSetor[s].length}</b></div>`).join("")
+    ? chaves.map((s) => {
+        const qtdS = porSetor[s].reduce((a,p)=>a+(Number(p.quantidade)||1),0);
+        const pedsS = porSetor[s].length;
+        return `<div class="tab"><span>${escapar(s)}</span><b>${qtdS} <small style="font-weight:500;font-size:13px">(${pedsS} pedido${pedsS===1?"":"s"})</small></b></div>`;
+      }).join("")
     : `<p class="vazio">Ninguém pediu ainda.</p>`;
 
-  const entregues = lista.filter((p) => p.entregue).length;
-  $("#progresso").textContent = total ? `${entregues} de ${total} entregues` : "";
+  const entregues = soma(lista.filter((p) => p.entregue));
+  $("#progresso").textContent = total ? `${entregues} de ${total} marmitas entregues` : "";
 
   $("#listaEntrega").innerHTML = lista.length
     ? chaves.map((s) => `
-        <div class="grupo-setor">${escapar(s)} · ${porSetor[s].length}</div>
+        <div class="grupo-setor">${escapar(s)} · ${porSetor[s].reduce((a,p)=>a+(Number(p.quantidade)||1),0)} marmitas</div>
         ${porSetor[s].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).map((p) => `
           <div class="item ${p.entregue ? "pronto" : ""}">
             <button type="button" class="marcar" data-id="${escapar(p.id)}" aria-pressed="${!!p.entregue}" aria-label="Marcar como entregue">✓</button>
             <div class="item-info">
               <div class="item-nome">${escapar(p.nome)}</div>
-              <div class="item-sub">pediu ${escapar(p.hora)}</div>
+              <div class="item-sub">${p.quantidade > 1 ? p.quantidade + " marmitas · " : ""}pediu ${escapar(p.hora)}</div>
             </div>
           </div>`).join("")}`).join("")
     : `<p class="vazio">Nenhum pedido para esta refeição.</p>`;
@@ -714,10 +751,13 @@ function desenharPainel() {
 function textoResumo() {
   const lista = daRefeicao();
   const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
-  const linhas = [`*Marmitas — ${REFEICOES[pRef]} de ${dataLonga(hojeISO())}*`, `*TOTAL: ${lista.length}*`, ""];
+  const totalMsg = lista.reduce((a,p)=>a+(Number(p.quantidade)||1),0);
+  const linhas = [`*Marmitas — ${REFEICOES[pRef]} de ${dataLonga(hojeISO())}*`, `*TOTAL: ${totalMsg} marmita${totalMsg===1?"":"s"} (${lista.length} pedido${lista.length===1?"":"s"})*`, ""];
   Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((s) => {
-    linhas.push(`*${s} — ${porSetor[s].length}*`);
-    porSetor[s].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).forEach((p) => linhas.push(`  ${p.nome}`));
+    const totalS = porSetor[s].reduce((a,p)=>a+(Number(p.quantidade)||1),0);
+    linhas.push(`*${s} — ${totalS} marmita${totalS===1?"":"s"}*`);
+    porSetor[s].sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"))
+      .forEach((p) => linhas.push(`  ${p.nome}: ${p.quantidade||1}`));
   });
   return linhas.join("\n");
 }
@@ -753,23 +793,30 @@ function desenharHistorico(inicio, fim) {
   $("#hVazio").classList.toggle("oculto", lista.length > 0);
   if (!lista.length) return;
 
-  $("#hTotalNum").textContent = lista.length;
-  $("#hTotalLabel").textContent = `marmitas · ${dataCurtaBR(inicio)} a ${dataCurtaBR(fim)}`;
+  const somaHist = (l) => l.reduce((s,p)=>s+(Number(p.quantidade)||1),0);
+  const totalHist = somaHist(lista);
+  $("#hTotalNum").textContent = totalHist;
+  $("#hTotalLabel").textContent = `marmita${totalHist===1?"":"s"} · ${dataCurtaBR(inicio)} a ${dataCurtaBR(fim)}`;
 
   const porRefeicao = agrupar(lista, (p) => p.refeicao);
-  $("#hPorRefeicao").innerHTML = Object.keys(REFEICOES).map((r) =>
-    `<div class="tab"><span>${REFEICOES[r]}</span><b>${(porRefeicao[r] || []).length}</b></div>`).join("");
+  $("#hPorRefeicao").innerHTML = Object.keys(REFEICOES).map((r) => {
+    const qtdR = somaHist(porRefeicao[r]||[]);
+    const pedsR = (porRefeicao[r]||[]).length;
+    return `<div class="tab"><span>${REFEICOES[r]}</span><b>${qtdR} <small style="font-weight:500;font-size:13px">(${pedsR} pedido${pedsR===1?"":"s"})</small></b></div>`;
+  }).join("");
 
   const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
-  $("#hPorSetor").innerHTML = Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR"))
-    .map((s) => `<div class="tab"><span>${escapar(s)}</span><b>${porSetor[s].length}</b></div>`).join("");
+  $("#hPorSetor").innerHTML = Object.keys(porSetor).sort((a,b)=>a.localeCompare(b,"pt-BR"))
+    .map((s) => `<div class="tab"><span>${escapar(s)}</span><b>${somaHist(porSetor[s])}</b></div>`).join("");
 
   const porDia = agrupar(lista, (p) => p.data);
   $("#hPorDia").innerHTML = Object.keys(porDia).sort().reverse().map((d) => {
     const doDia = porDia[d];
     const almoco = doDia.filter((p) => p.refeicao === "almoco").length;
     const janta = doDia.filter((p) => p.refeicao === "janta").length;
-    return `<div class="tab"><span>${dataLonga(d)}</span><b>${almoco} almoço · ${janta} janta</b></div>`;
+    const almocoQ = doDia.filter(p=>p.refeicao==="almoco").reduce((a,p)=>a+(Number(p.quantidade)||1),0);
+    const jantaQ  = doDia.filter(p=>p.refeicao==="janta").reduce((a,p)=>a+(Number(p.quantidade)||1),0);
+    return `<div class="tab"><span>${dataLonga(d)}</span><b>${almocoQ} almoço · ${jantaQ} janta</b></div>`;
   }).join("");
 }
 
@@ -909,7 +956,7 @@ function ligarEventos() {
 
   $("#painelData"); // noop, mantém referência viva
   $$(".pref").forEach((b) => b.onclick = () => { pRef = b.dataset.ref; $$(".pref").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.ref === pRef))); desenharPainel(); });
-  $("#btnWhats").onclick = () => open(`https://wa.me/${CONFIG.whatsappRancho.replace(/\D/g, "")}?text=${encodeURIComponent(textoResumo())}`, "_blank");
+  $("#btnWhats").onclick = () => open(`https://wa.me/${CONFIG.whatsappContato.replace(/\D/g, "")}?text=${encodeURIComponent(textoResumo())}`, "_blank");
   $("#btnCopiar").onclick = async () => { try { await navigator.clipboard.writeText(textoResumo()); aviso("Lista copiada"); } catch { prompt("Copie a lista:", textoResumo()); } };
   $("#btnImprimir").onclick = () => print();
 

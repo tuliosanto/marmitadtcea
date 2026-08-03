@@ -1,13 +1,13 @@
 {
-  "name": "Quentinhas",
-  "short_name": "Quentinhas",
-  "description": "Pedido de quentinha do dia",
+  "name": "Pedidos de Marmita",
+  "short_name": "Marmita",
+  "description": "Pedido de marmita do dia — DTCEA-SM",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#E7EAE6",
-  "theme_color": "#0E5C3F",
+  "background_color": "#EEECE6",
+  "theme_color": "#29166F",
   "lang": "pt-BR",
   "icons": [
     { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

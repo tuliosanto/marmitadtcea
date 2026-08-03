@@ -1,7 +1,7 @@
 // Service worker enxuto: guarda a casca do app para abrir rápido e offline.
 // Troque a versão sempre que atualizar o index.html.
-const VERSAO = "quentinhas-v4";
-const CASCA = ["./", "./index.html", "./manifest.json", "./icone-192.png", "./icone-512.png"];
+const VERSAO = "marmita-v5";
+const CASCA = ["./", "./index.html", "./manifest.json", "./icone-192.png", "./icone-512.png", "./config.js", "./logo.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSAO).then((c) => c.addAll(CASCA)).then(() => self.skipWaiting()));
