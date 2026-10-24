@@ -1,730 +1,1648 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
-<title>Pedidos de Marmita — DTCEA-SM</title>
-<meta name="description" content="Pedido de marmita do dia — DTCEA-SM">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0E5C3F">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Pedidos de Marmita">
-<link rel="apple-touch-icon" href="icone-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --aluminio: #F4F6F8; 
-  --tampa: #FFFFFF;
-  --tinta: #1A1F2B; 
-  --tinta-fraca: #637381;
-  --verde: #0E5C3F;
-  --verde-claro: #E6F3EE;
-  --verde-hover: #0B4A32;
-  --escuro: #092C1E;
-  --mostarda: #F2C94C; 
-  --alerta: #EB5757;
-  --linha: #E2E8F0;
-  --raio: 16px;
-  --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  --sombra-suave: 0 1px 3px rgba(0,0,0,0.05);
-  --fonte: 'Inter', system-ui, -apple-system, sans-serif;
-  --fonte-destaque: 'Outfit', 'Inter', system-ui, sans-serif;
-}
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-button { touch-action: manipulation; user-select: none; }
-html, body { margin: 0; padding: 0; }
-body { font-family: var(--fonte); background: var(--aluminio); color: var(--tinta); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
-.wrap { max-width: 560px; margin: 0 auto; padding: 0 16px 40px; }
-.oculto { display: none !important; }
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
+  <title>Pedidos de Marmita — DTCEA-SM</title>
+  <meta name="description" content="Pedido de marmita do dia — DTCEA-SM">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0E5C3F">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Pedidos de Marmita">
+  <link rel="apple-touch-icon" href="icone-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --aluminio: #F4F6F8;
+      --tampa: #FFFFFF;
+      --tinta: #1A1F2B;
+      --tinta-fraca: #637381;
+      --verde: #0E5C3F;
+      --verde-claro: #E6F3EE;
+      --verde-hover: #0B4A32;
+      --escuro: #092C1E;
+      --mostarda: #F2C94C;
+      --alerta: #EB5757;
+      --linha: #E2E8F0;
+      --raio: 16px;
+      --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --sombra-suave: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --fonte: 'Inter', system-ui, -apple-system, sans-serif;
+      --fonte-destaque: 'Outfit', 'Inter', system-ui, sans-serif;
+      --ease-saida: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --trans: transform 180ms var(--ease-saida), background-color 180ms ease, border-color 180ms ease,
+        box-shadow 180ms ease, color 180ms ease, opacity 180ms ease;
+    }
 
-header { 
-  background: var(--verde); 
-  color: #fff; 
-  padding: calc(env(safe-area-inset-top) + 20px) 16px 20px;
-  background-image: linear-gradient(135deg, var(--verde) 0%, var(--escuro) 100%);
-  position: relative;
-  z-index: 10;
-}
-.head-in { max-width: 560px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.head-esq { display: flex; align-items: center; gap: 12px; }
-.logo-brasao { width: 48px; height: auto; flex: 0 0 auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)); }
-.marca { margin: 0; font-family: var(--fonte-destaque); font-size: 24px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
-.marca span { display: block; font-family: var(--fonte); font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; opacity: 0.8; margin-bottom: 2px; }
-.head-dir { text-align: right; font-size: 13px; line-height: 1.3; }
-.head-dir b { display: block; font-weight: 700; }
-.head-dir button { background: none; border: none; color: rgba(255,255,255,0.9); font: inherit; font-size: 12px; text-decoration: underline; padding: 4px 0; cursor: pointer; transition: color 0.2s; }
-.head-dir button:hover { color: #fff; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
 
-nav.abas { 
-  background: var(--escuro); 
-  padding: 0 16px; 
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-nav.abas .abas-in { max-width: 560px; margin: 0 auto; display: flex; gap: 4px; }
-nav.abas button { flex: 1; background: none; border: none; border-bottom: 3px solid transparent; color: rgba(255,255,255,0.6); font-family: var(--fonte-destaque); font-size: 14px; font-weight: 700; padding: 14px 4px; cursor: pointer; transition: all 0.2s; }
-nav.abas button:hover { color: rgba(255,255,255,0.8); }
-nav.abas button[aria-selected=true] { color: #fff; border-bottom-color: var(--mostarda); }
+    button {
+      touch-action: manipulation;
+      user-select: none;
+    }
 
-main { padding-top: 24px; }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-.bloco { background: var(--tampa); border: 1px solid var(--linha); border-radius: var(--raio); padding: 20px; margin-bottom: 16px; box-shadow: var(--sombra-suave); transition: box-shadow 0.3s ease; }
-.bloco:hover { box-shadow: var(--sombra); }
-.rotulo { font-family: var(--fonte-destaque); font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--tinta-fraca); margin: 0 0 12px; }
-label { display: block; font-size: 13px; font-weight: 600; color: var(--tinta-fraca); margin: 0 0 8px; }
-input[type=text], input[type=password], select, input[type=date] { 
-  width: 100%; font: inherit; font-size: 16px; color: var(--tinta); background: #f8fafc; 
-  border: 1.5px solid var(--linha); border-radius: 12px; padding: 14px 16px; 
-  transition: all 0.2s ease; 
-}
-input:focus, select:focus { outline: none; border-color: var(--verde); background: #fff; box-shadow: 0 0 0 4px var(--verde-claro); }
-select { appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="9"><path d="M1 1l6 6 6-6" stroke="%23637381" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
-.campo { margin-bottom: 16px; }
-.campo:last-child { margin-bottom: 0; }
-.dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    body {
+      font-family: var(--fonte);
+      background: var(--aluminio);
+      color: var(--tinta);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
 
-.refeicoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.ref { border: 1.5px solid var(--linha); background: #f8fafc; border-radius: 14px; padding: 16px; cursor: pointer; font: inherit; text-align: left; color: var(--tinta); transition: all 0.2s; }
-.ref b { display: block; font-family: var(--fonte-destaque); font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
-.ref small { display: block; font-size: 12px; color: var(--tinta-fraca); margin-top: 4px; }
-.ref:hover:not(:disabled) { border-color: var(--verde); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(14, 92, 63, 0.1); }
-.ref[aria-pressed=true] { border-color: var(--verde); background: var(--verde-claro); box-shadow: 0 0 0 1px var(--verde); }
-.ref:disabled { opacity: 0.6; cursor: not-allowed; background: #f1f5f9; }
-.ref:disabled small { color: var(--alerta); font-weight: 700; }
+    .wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 0 16px 40px;
+    }
 
-.btn { display: block; width: 100%; font-family: var(--fonte-destaque); font-size: 17px; font-weight: 700; background: var(--verde); color: #fff; border: none; border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(14, 92, 63, 0.2); }
-.btn:hover:not(:disabled) { background: var(--verde-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(14, 92, 63, 0.3); }
-.btn:active { transform: translateY(1px); box-shadow: none; }
-.btn:disabled { background: var(--linha); color: #94a3b8; cursor: default; transform: none; box-shadow: none; }
-.btn-2 { background: #fff; color: var(--tinta); border: 1.5px solid var(--linha); font-size: 15px; padding: 14px; box-shadow: var(--sombra-suave); }
-.btn-2:hover:not(:disabled) { background: #f8fafc; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.btn-perigo { background: #fff; color: var(--alerta); border: 1.5px solid #fecaca; font-size: 15px; padding: 14px; }
-.btn-perigo:hover { background: #fef2f2; border-color: var(--alerta); }
-.btn-mini { width: auto; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 9px; box-shadow: none; }
-.linha-btn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .oculto {
+      display: none !important;
+    }
 
-.ficha { background: #fff; border: 1px solid var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); overflow: hidden; margin-bottom: 16px; transition: transform 0.2s; }
-.ficha:hover { transform: translateY(-2px); }
-.ficha-topo { background: var(--escuro); color: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
-.ficha-topo span { font-family: var(--fonte-destaque); font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; }
-.ficha-corpo { padding: 20px; display: flex; gap: 16px; align-items: center; }
-.ficha-selo { flex: 0 0 auto; width: 64px; height: 64px; border-radius: 16px; background: var(--mostarda); display: flex; align-items: center; justify-content: center; font-family: var(--fonte-destaque); font-size: 32px; font-weight: 800; color: var(--escuro); box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1); }
-.ficha-corpo h2 { margin: 0 0 4px; font-family: var(--fonte-destaque); font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
-.ficha-corpo p { margin: 0; color: var(--tinta-fraca); font-size: 15px; }
-.picote { border-top: 2px dashed var(--linha); margin: 0 20px; opacity: 0.6; }
-.ficha-pe { padding: 16px 20px; }
+    header {
+      background: var(--verde);
+      color: #fff;
+      padding: calc(env(safe-area-inset-top) + 20px) 16px 20px;
+      background-image: linear-gradient(135deg, var(--verde) 0%, var(--escuro) 100%);
+      position: relative;
+      z-index: 10;
+    }
 
-.placar { background: linear-gradient(135deg, var(--escuro) 0%, #1a362c 100%); color: #fff; border-radius: var(--raio); padding: 24px; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(9, 44, 30, 0.4); position: relative; overflow: hidden; }
-.placar::after { content: ''; position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
-.placar .rotulo { color: rgba(255,255,255,0.7); margin-bottom: 8px; }
-.placar-num { font-family: var(--fonte-destaque); font-size: 72px; font-weight: 800; line-height: 0.9; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; text-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.placar-num small { display: block; font-family: var(--fonte); font-size: 15px; font-weight: 600; letter-spacing: 0; opacity: 0.8; margin-top: 12px; }
-.risco { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; min-height: 28px; }
-.grupo { position: relative; display: flex; gap: 5px; }
-.grupo i { display: block; width: 4px; height: 28px; background: var(--mostarda); border-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-.grupo.cheio::after { content: ""; position: absolute; left: -4px; right: -4px; top: 12px; height: 4px; background: var(--mostarda); border-radius: 2px; transform: rotate(-15deg); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .head-in {
+      max-width: 560px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
 
-.tab { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--linha); font-size: 15px; }
-.tab:last-child { border-bottom: none; }
-.tab b { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--verde); }
-.item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--linha); transition: opacity 0.2s; }
-.item:last-child { border-bottom: none; padding-bottom: 0; }
-.item.pronto { opacity: 0.5; }
-.item.pronto .item-nome { text-decoration: line-through; color: var(--tinta-fraca); }
-.item-info { flex: 1; min-width: 0; }
-.item-nome { font-size: 16px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.item-sub { font-size: 13px; color: var(--tinta-fraca); margin-top: 2px; }
-.marcar { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 2px solid var(--linha); background: #fff; cursor: pointer; font-size: 20px; color: transparent; line-height: 1; padding: 0; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; }
-.marcar[aria-pressed=true] { background: var(--verde); border-color: var(--verde); color: #fff; box-shadow: 0 4px 12px rgba(14, 92, 63, 0.3); transform: scale(1.05); }
-.grupo-setor { font-family: var(--fonte-destaque); font-size: 12px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--verde); padding: 20px 0 6px; border-bottom: 2px solid var(--verde); margin-top: 8px; }
-.vazio { margin: 0; color: var(--tinta-fraca); font-size: 15px; background: #f8fafc; padding: 20px; border-radius: 12px; text-align: center; border: 1px dashed var(--linha); }
+    .head-esq {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-.cracha { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; background: var(--escuro); color: #fff; margin-left: 8px; vertical-align: 1px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+    .logo-brasao {
+      width: 48px;
+      height: auto;
+      flex: 0 0 auto;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+    }
 
-.qtd { display: flex; align-items: center; gap: 20px; justify-content: center; margin-top: 8px; background: #f8fafc; padding: 16px; border-radius: 16px; border: 1px solid var(--linha); }
-.qtd-btn { width: 48px; height: 48px; border-radius: 12px; border: none; background: #fff; font-size: 24px; font-weight: 600; color: var(--verde); cursor: pointer; line-height: 1; flex: 0 0 auto; box-shadow: var(--sombra-suave); transition: all 0.15s; }
-.qtd-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); color: var(--verde-hover); }
-.qtd-btn:active { transform: translateY(0); background: var(--verde-claro); }
-.qtd-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; background: transparent; border: 1px solid var(--linha); }
-.qtd-num { font-family: var(--fonte-destaque); font-size: 40px; font-weight: 800; min-width: 60px; text-align: center; font-variant-numeric: tabular-nums; letter-spacing: -0.04em; color: var(--tinta); }
-.item-qtd { font-family: var(--fonte-destaque); font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--verde); flex: 0 0 auto; background: var(--verde-claro); padding: 4px 12px; border-radius: 8px; }
+    .marca {
+      margin: 0;
+      font-family: var(--fonte-destaque);
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
 
-/* ── botões de setor ─────────────────────────────────────── */
-.setores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.setor-btn {
-  border: 1.5px solid var(--linha); background: #fff; border-radius: 12px;
-  padding: 16px 8px; font-family: var(--fonte-destaque); font-size: 15px; font-weight: 700;
-  color: var(--tinta-fraca); cursor: pointer; text-align: center;
-  line-height: 1.2; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--sombra-suave);
-}
-.setor-btn:hover:not([aria-pressed=true]) { border-color: #cbd5e1; color: var(--tinta); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-.setor-btn:active { transform: translateY(0); }
-.setor-btn[aria-pressed=true] {
-  border-color: var(--verde); background: var(--verde); color: #fff;
-  box-shadow: 0 4px 12px rgba(14, 92, 63, 0.3); transform: scale(1.02);
-}
+    .marca span {
+      display: block;
+      font-family: var(--fonte);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 2px;
+    }
 
-/* ── lista montada pela permanência ─────────────────────── */
-.lista-perm { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-.lista-perm-item {
-  display: flex; align-items: center; gap: 12px;
-  background: #fff; border: 1px solid var(--linha); border-radius: 14px;
-  padding: 14px 20px; box-shadow: var(--sombra-suave);
-}
-.lp-setor { flex: 1; font-family: var(--fonte-destaque); font-size: 16px; font-weight: 700; }
-.lp-qtd {
-  font-family: var(--fonte-destaque); font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums;
-  color: var(--verde); min-width: 32px; text-align: center;
-  background: var(--verde-claro); padding: 4px 12px; border-radius: 8px;
-}
-.lp-del {
-  background: none; border: none; color: var(--tinta-fraca);
-  font-size: 24px; cursor: pointer; padding: 8px; line-height: 1;
-  opacity: 0.5; transition: all 0.2s; border-radius: 50%;
-}
-.lp-del:hover { color: var(--alerta); opacity: 1; background: #fef2f2; }
+    .head-dir {
+      text-align: right;
+      font-size: 13px;
+      line-height: 1.3;
+    }
 
-/* ── controles de qtd inline (permanência) ───────────────── */
-.perm-controles {
-  display: flex; align-items: center; gap: 12px;
-  margin-top: 16px; padding: 16px;
-  background: var(--verde-claro); border: 1.5px solid var(--verde);
-  border-radius: 16px; box-shadow: 0 4px 12px rgba(14, 92, 63, 0.1);
-}
-.setor-label { flex: 1; font-family: var(--fonte-destaque); font-size: 16px; font-weight: 800; color: var(--verde); }
-.aviso { border-radius: 12px; padding: 14px 16px; font-size: 14px; font-weight: 600; margin-bottom: 16px; border: 1.5px solid; display: flex; align-items: center; gap: 8px; }
-.aviso::before { content: '⚠️'; font-size: 18px; }
-.aviso-amarelo { background: #fffbeb; border-color: #fde68a; color: #92400e; }
-.aviso-erro { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-.rodape { text-align: center; font-size: 14px; color: var(--tinta-fraca); margin-top: 24px; }
-.rodape button { background: none; border: none; font-family: var(--fonte-destaque); font-weight: 600; font-size: 14px; color: var(--tinta-fraca); text-decoration: underline; cursor: pointer; padding: 8px; transition: color 0.2s; }
-.rodape button:hover { color: var(--tinta); }
+    .head-dir b {
+      display: block;
+      font-weight: 700;
+    }
 
-.login-topo { text-align: center; padding: 56px 0 32px; }
-.login-topo h1 { margin: 0; font-family: var(--fonte-destaque); font-size: 32px; font-weight: 800; letter-spacing: -0.04em; }
-.login-topo p { margin: 8px 0 0; color: var(--tinta-fraca); font-size: 16px; }
-.login-selo { width: 72px; height: auto; margin: 0 auto 16px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+    .head-dir button {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.9);
+      font: inherit;
+      font-size: 12px;
+      text-decoration: underline;
+      padding: 12px 0 12px 16px;
+      min-height: 44px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
 
-.toast { position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%) translateY(20px); z-index: 60; background: var(--tinta); color: #fff; padding: 14px 24px; border-radius: 999px; font-size: 15px; font-weight: 600; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 88vw; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-.toast.ver { opacity: 1; transform: translateX(-50%) translateY(0); }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-:focus-visible { outline: 3px solid var(--mostarda); outline-offset: 2px; }
-@media print { header, nav.abas, .btn, .linha-btn, .rodape, .marcar, .placar::after { display: none !important; } body { background: #fff; } .bloco { box-shadow: none; border-color: #000; } }
-</style>
+    .head-dir button:hover {
+      color: #fff;
+    }
+
+    nav.abas {
+      background: var(--escuro);
+      padding: 0 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    nav.abas .abas-in {
+      max-width: 560px;
+      margin: 0 auto;
+      display: flex;
+      gap: 4px;
+    }
+
+    nav.abas button {
+      flex: 1;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: var(--fonte-destaque);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 14px 4px;
+      cursor: pointer;
+      transition: var(--trans);
+    }
+
+    nav.abas button:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    nav.abas button[aria-selected=true] {
+      color: #fff;
+      border-bottom-color: var(--mostarda);
+    }
+
+    main {
+      padding-top: 24px;
+    }
+
+    .bloco {
+      background: var(--tampa);
+      border: 1px solid var(--linha);
+      border-radius: var(--raio);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--sombra-suave);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .bloco:hover {
+      box-shadow: var(--sombra);
+    }
+
+    .rotulo {
+      font-family: var(--fonte-destaque);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--tinta-fraca);
+      margin: 0 0 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--tinta-fraca);
+      margin: 0 0 8px;
+    }
+
+    input[type=text],
+    input[type=password],
+    select,
+    input[type=date] {
+      width: 100%;
+      font: inherit;
+      font-size: 16px;
+      color: var(--tinta);
+      background: #f8fafc;
+      border: 1.5px solid var(--linha);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: var(--trans);
+    }
+
+    input[type=date] {
+      padding: 12px 14px;
+      min-width: 0;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--verde);
+      background: #fff;
+      box-shadow: 0 0 0 4px var(--verde-claro);
+    }
+
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="9"><path d="M1 1l6 6 6-6" stroke="%23637381" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    .campo {
+      margin-bottom: 16px;
+    }
+
+    .campo:last-child {
+      margin-bottom: 0;
+    }
+
+    .dupla {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .refeicoes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .ref {
+      border: 1.5px solid var(--linha);
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 16px;
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+      color: var(--tinta);
+      transition: var(--trans);
+    }
+
+    .ref b {
+      display: block;
+      font-family: var(--fonte-destaque);
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .ref small {
+      display: block;
+      font-size: 12px;
+      color: var(--tinta-fraca);
+      margin-top: 4px;
+    }
+
+    .ref small.urgente {
+      color: #B45309;
+      font-weight: 700;
+    }
+
+    .ref:hover:not(:disabled) {
+      border-color: var(--verde);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(14, 92, 63, 0.1);
+    }
+
+    .ref[aria-pressed=true] {
+      border-color: var(--verde);
+      background: var(--verde-claro);
+      box-shadow: 0 0 0 1px var(--verde);
+    }
+
+    .ref:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: #f1f5f9;
+    }
+
+    .ref:disabled small {
+      color: var(--alerta);
+      font-weight: 700;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      font-family: var(--fonte-destaque);
+      font-size: 17px;
+      font-weight: 700;
+      background: var(--verde);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: var(--trans);
+      box-shadow: 0 4px 12px rgba(14, 92, 63, 0.2);
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--verde-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(14, 92, 63, 0.3);
+    }
+
+    .btn:active {
+      box-shadow: none;
+    }
+
+    .btn:disabled {
+      background: var(--linha);
+      color: #94a3b8;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .pedir-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-ref {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 18px 12px;
+    }
+
+    .btn-ref small {
+      font-family: var(--fonte);
+      font-size: 12px;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+
+    .btn-ref small.urgente {
+      color: var(--mostarda);
+      opacity: 1;
+    }
+
+    .dica {
+      margin: 12px 0 0;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--tinta-fraca);
+    }
+
+    .btn-2 {
+      background: #fff;
+      color: var(--tinta);
+      border: 1.5px solid var(--linha);
+      font-size: 15px;
+      padding: 14px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .btn-2:hover:not(:disabled) {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-perigo {
+      background: #fff;
+      color: var(--alerta);
+      border: 1.5px solid #fecaca;
+      font-size: 15px;
+      padding: 14px;
+    }
+
+    .btn-perigo:hover {
+      background: #fef2f2;
+      border-color: var(--alerta);
+    }
+
+    .btn-mini {
+      width: auto;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 9px;
+      box-shadow: none;
+    }
+
+    .linha-btn {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .ficha {
+      background: #fff;
+      border: 1px solid var(--linha);
+      border-radius: var(--raio);
+      box-shadow: var(--sombra);
+      overflow: hidden;
+      margin-bottom: 16px;
+      transition: var(--trans);
+    }
+
+    .ficha:hover {
+      transform: translateY(-2px);
+    }
+
+    .ficha-topo {
+      background: var(--escuro);
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ficha-topo span {
+      font-family: var(--fonte-destaque);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .ficha-corpo {
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .ficha-selo {
+      flex: 0 0 auto;
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: var(--mostarda);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fonte-destaque);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--escuro);
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .ficha-corpo h2 {
+      margin: 0 0 4px;
+      font-family: var(--fonte-destaque);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .ficha-corpo p {
+      margin: 0;
+      color: var(--tinta-fraca);
+      font-size: 15px;
+    }
+
+    .picote {
+      border-top: 2px dashed var(--linha);
+      margin: 0 20px;
+      opacity: 0.6;
+    }
+
+    .ficha-pe {
+      padding: 16px 20px;
+    }
+
+    .placar {
+      background: linear-gradient(135deg, var(--escuro) 0%, #1a362c 100%);
+      color: #fff;
+      border-radius: var(--raio);
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(9, 44, 30, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .placar::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .placar .rotulo {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 8px;
+    }
+
+    .placar-num {
+      font-family: var(--fonte-destaque);
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .placar-num small {
+      display: block;
+      font-family: var(--fonte);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0;
+      opacity: 0.8;
+      margin-top: 12px;
+    }
+
+    .risco {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+      min-height: 28px;
+    }
+
+    .grupo {
+      position: relative;
+      display: flex;
+      gap: 5px;
+    }
+
+    .grupo i {
+      display: block;
+      width: 4px;
+      height: 28px;
+      background: var(--mostarda);
+      border-radius: 2px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .grupo.cheio::after {
+      content: "";
+      position: absolute;
+      left: -4px;
+      right: -4px;
+      top: 12px;
+      height: 4px;
+      background: var(--mostarda);
+      border-radius: 2px;
+      transform: rotate(-15deg);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .tab {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--linha);
+      font-size: 15px;
+    }
+
+    .tab:last-child {
+      border-bottom: none;
+    }
+
+    .tab b {
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      color: var(--verde);
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--linha);
+      transition: opacity 0.2s;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .item.pronto {
+      opacity: 0.5;
+    }
+
+    .item.pronto .item-nome {
+      text-decoration: line-through;
+      color: var(--tinta-fraca);
+    }
+
+    .item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-nome {
+      font-size: 16px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-sub {
+      font-size: 13px;
+      color: var(--tinta-fraca);
+      margin-top: 2px;
+    }
+
+    .marcar {
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 2px solid var(--linha);
+      background: #fff;
+      cursor: pointer;
+      font-size: 20px;
+      color: transparent;
+      line-height: 1;
+      padding: 0;
+      transition: var(--trans);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .marcar[aria-pressed=true] {
+      background: var(--verde);
+      border-color: var(--verde);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(14, 92, 63, 0.3);
+      transform: scale(1.05);
+    }
+
+    .grupo-setor {
+      font-family: var(--fonte-destaque);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--verde);
+      padding: 20px 0 6px;
+      border-bottom: 2px solid var(--verde);
+      margin-top: 8px;
+    }
+
+    .vazio {
+      margin: 0;
+      color: var(--tinta-fraca);
+      font-size: 15px;
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px dashed var(--linha);
+    }
+
+    .cracha {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: var(--escuro);
+      color: #fff;
+      margin-left: 8px;
+      vertical-align: 1px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .qtd-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      border: none;
+      background: #fff;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--verde);
+      cursor: pointer;
+      line-height: 1;
+      flex: 0 0 auto;
+      box-shadow: var(--sombra-suave);
+      transition: var(--trans);
+    }
+
+    .qtd-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      color: var(--verde-hover);
+    }
+
+    .qtd-btn:active {
+      background: var(--verde-claro);
+    }
+
+    .qtd-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+      background: transparent;
+      border: 1px solid var(--linha);
+    }
+
+    .qtd-num {
+      font-family: var(--fonte-destaque);
+      font-size: 40px;
+      font-weight: 800;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+      color: var(--tinta);
+    }
+
+    .item-qtd {
+      font-family: var(--fonte-destaque);
+      font-size: 20px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--verde);
+      flex: 0 0 auto;
+      background: var(--verde-claro);
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
+
+    /* ── botões de setor ─────────────────────────────────────── */
+    .setores-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .setor-btn {
+      border: 1.5px solid var(--linha);
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 8px;
+      font-family: var(--fonte-destaque);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--tinta-fraca);
+      cursor: pointer;
+      text-align: center;
+      line-height: 1.2;
+      transition: var(--trans);
+      box-shadow: var(--sombra-suave);
+    }
+
+    .setor-btn:hover:not([aria-pressed=true]) {
+      border-color: #cbd5e1;
+      color: var(--tinta);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .setor-btn[aria-pressed=true] {
+      border-color: var(--verde);
+      background: var(--verde);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(14, 92, 63, 0.3);
+      transform: scale(1.02);
+    }
+
+    /* ── lista montada pela permanência ─────────────────────── */
+    .lista-perm {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .lista-perm-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+      border: 1px solid var(--linha);
+      border-radius: 14px;
+      padding: 14px 20px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .lp-setor {
+      flex: 1;
+      font-family: var(--fonte-destaque);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .lp-qtd {
+      font-family: var(--fonte-destaque);
+      font-size: 22px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--verde);
+      min-width: 32px;
+      text-align: center;
+      background: var(--verde-claro);
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
+
+    .lp-del {
+      background: none;
+      border: none;
+      color: var(--tinta-fraca);
+      font-size: 24px;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.6;
+      transition: var(--trans);
+      border-radius: 50%;
+    }
+
+    .lp-del:hover {
+      color: var(--alerta);
+      opacity: 1;
+      background: #fef2f2;
+    }
+
+    /* ── controles de qtd inline (permanência) ───────────────── */
+    .perm-controles {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--verde-claro);
+      border: 1.5px solid var(--verde);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(14, 92, 63, 0.1);
+    }
+
+    .setor-label {
+      flex: 1;
+      font-family: var(--fonte-destaque);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--verde);
+    }
+
+    .aviso {
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      border: 1.5px solid;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .aviso::before {
+      content: '';
+      flex: 0 0 18px;
+      height: 18px;
+      background: currentColor;
+      -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>') center / contain no-repeat;
+      mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>') center / contain no-repeat;
+    }
+
+    .aviso-amarelo {
+      background: #fffbeb;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .aviso-erro {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .rodape {
+      text-align: center;
+      font-size: 14px;
+      color: var(--tinta-fraca);
+      margin-top: 24px;
+    }
+
+    .rodape button {
+      background: none;
+      border: none;
+      font-family: var(--fonte-destaque);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--tinta-fraca);
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.2s;
+    }
+
+    .rodape button:hover {
+      color: var(--tinta);
+    }
+
+    .login-topo {
+      text-align: center;
+      padding: 56px 0 32px;
+    }
+
+    .login-topo h1 {
+      margin: 0;
+      font-family: var(--fonte-destaque);
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .login-topo p {
+      margin: 8px 0 0;
+      color: var(--tinta-fraca);
+      font-size: 16px;
+    }
+
+    .login-selo {
+      width: 72px;
+      height: auto;
+      margin: 0 auto 16px;
+      display: block;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(32px + env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(20px);
+      z-index: 60;
+      background: var(--tinta);
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms ease-in, transform 150ms ease-in;
+      max-width: 88vw;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toast.ver {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      transition: opacity 200ms ease-out, transform 300ms var(--ease-pop);
+    }
+
+    /* telas e painéis entram com um leve deslizar ao aparecer */
+    @keyframes entrar {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+    }
+
+    @keyframes selo {
+      from {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+    }
+
+    #formPedido,
+    #fichaBox,
+    #telaLogin .wrap,
+    #appEquipe main > section,
+    #resultadoHistorico,
+    #listaPermBox,
+    #permControles {
+      animation: entrar 250ms var(--ease-saida);
+    }
+
+    .ficha-selo {
+      animation: selo 400ms var(--ease-pop) 120ms backwards;
+    }
+
+    /* no celular o :hover "gruda" depois do toque — sem pulinhos */
+    @media (hover: none) {
+
+      .bloco:hover,
+      .ficha:hover,
+      .ref:hover:not(:disabled),
+      .btn:hover:not(:disabled),
+      .qtd-btn:hover:not(:disabled),
+      .setor-btn:hover:not([aria-pressed=true]) {
+        transform: none;
+      }
+    }
+
+    .btn:active:not(:disabled),
+    .ref:active:not(:disabled),
+    .setor-btn:active:not(:disabled),
+    .qtd-btn:active:not(:disabled),
+    .marcar:active {
+      transform: scale(0.97);
+      transition-duration: 80ms;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--mostarda);
+      outline-offset: 2px;
+    }
+
+    @media print {
+
+      header,
+      nav.abas,
+      .btn,
+      .linha-btn,
+      .rodape,
+      .marcar,
+      .placar::after {
+        display: none !important;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      .bloco {
+        box-shadow: none;
+        border-color: #000;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- ================= PEDIDO (público, sem login) ================= -->
-<section id="telaPedido">
-  <header>
-    <div class="head-in">
-      <div class="head-esq">
-        <img class="logo-brasao" src="logo.png" alt="Brasão DTCEA-SM">
-        <h1 class="marca"><span id="nomeUnidade">Pedidos de</span>Marmita</h1>
-      </div>
-      <div class="head-dir" id="dataTopo">—</div>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <div id="avisoModo" class="aviso aviso-amarelo oculto"></div>
-    <div id="fichaBox" class="oculto"></div>
-
-    <form id="formPedido">
-      <div class="bloco">
-        <p class="rotulo">Seu nome</p>
-        <input type="text" id="nome" autocomplete="name" placeholder="Digite seu nome" required>
-      </div>
-
-      <div class="bloco">
-        <p class="rotulo">Setor</p>
-        <div class="setores-grid" id="setoresGrid"></div>
-      </div>
-
-      <div class="bloco">
-        <p class="rotulo">Refeição</p>
-        <div class="refeicoes">
-          <button type="button" class="ref" data-ref="almoco" aria-pressed="false"><b>Almoço</b><small></small></button>
-          <button type="button" class="ref" data-ref="janta" aria-pressed="false"><b>Janta</b><small></small></button>
+  <!-- ================= PEDIDO (público, sem login) ================= -->
+  <section id="telaPedido">
+    <header>
+      <div class="head-in">
+        <div class="head-esq">
+          <img class="logo-brasao" src="logo.png" alt="Brasão DTCEA-SM">
+          <h1 class="marca"><span id="nomeUnidade">Pedidos de</span>Marmita</h1>
         </div>
+        <div class="head-dir" id="dataTopo">—</div>
       </div>
+    </header>
 
-      <div class="bloco">
-        <p class="rotulo">Quantidade de marmitas</p>
-        <div class="qtd">
-          <button type="button" class="qtd-btn" id="qtdMenos" aria-label="Diminuir" disabled>−</button>
-          <div class="qtd-num" id="qtdNum">1</div>
-          <button type="button" class="qtd-btn" id="qtdMais" aria-label="Aumentar">+</button>
-        </div>
-      </div>
+    <main class="wrap">
+      <div id="avisoModo" class="aviso aviso-amarelo oculto"></div>
+      <div id="fichaBox" class="oculto"></div>
+      <p class="vazio" id="carregando" role="status">Carregando…</p>
 
-      <button type="submit" class="btn" id="btnEnviar" disabled>Escolha a refeição</button>
-    </form>
-
-    <p class="rodape"><button type="button" id="irEquipe">Sou motorista ou administrador</button></p>
-  </main>
-</section>
-
-<!-- ================= LOGIN DA EQUIPE ================= -->
-<section id="telaLogin" class="oculto">
-  <div class="wrap">
-    <div class="login-topo">
-      <img class="login-selo" src="logo.png" alt="Brasão DTCEA-SM">
-      <h1>Área da equipe</h1>
-      <p>Login do motorista ou administrador</p>
-    </div>
-    <form id="formLogin" class="bloco">
-      <div class="campo">
-        <label for="usuario">Usuário</label>
-        <input type="text" id="usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required>
-      </div>
-      <div class="campo">
-        <label for="senha">Senha</label>
-        <input type="password" id="senha" autocomplete="current-password" required>
-      </div>
-      <button type="submit" class="btn" id="btnEntrar">Entrar</button>
-    </form>
-    <p class="rodape"><button type="button" id="voltarPedido">Voltar para o pedido</button></p>
-  </div>
-</section>
-
-<!-- ================= ÁREA DA EQUIPE (logado) ================= -->
-<div id="appEquipe" class="oculto">
-  <header>
-    <div class="head-in">
-      <div class="head-esq">
-        <img class="logo-brasao" src="logo.png" alt="Brasão DTCEA-SM">
-        <h1 class="marca"><span id="nomeUnidade2">Pedidos de</span>Marmita</h1>
-      </div>
-      <div class="head-dir"><b id="euNome">—</b><button type="button" id="btnSair">Sair</button></div>
-    </div>
-  </header>
-  <nav class="abas">
-    <div class="abas-in">
-      <button type="button" data-tela="permanencia" aria-selected="true">Permanência</button>
-      <button type="button" data-tela="painel" aria-selected="false">Painel</button>
-      <button type="button" data-tela="historico" aria-selected="false">Histórico</button>
-      <button type="button" data-tela="admin" aria-selected="false" id="abaAdmin">Administração</button>
-    </div>
-  </nav>
-
-  <main class="wrap">
-
-    <!-- ---------- PERMANÊNCIA ---------- -->
-    <section id="telaPermanencia">
-      <div class="bloco">
-        <p class="rotulo">Refeição</p>
-        <div class="refeicoes">
-          <button type="button" class="ref ppref" data-ref="almoco" aria-pressed="true"><b>Almoço</b><small id="pprefAlmoco"></small></button>
-          <button type="button" class="ref ppref" data-ref="janta" aria-pressed="false"><b>Janta</b><small id="pprefJanta"></small></button>
-        </div>
-      </div>
-
-      <div class="bloco">
-        <p class="rotulo">Adicionar setor à lista</p>
-        <div class="setores-grid" id="setoresPermGrid"></div>
-        <div class="perm-controles" id="permControles" style="display:none">
-          <span class="setor-label" id="permSetorLabel">—</span>
-          <button type="button" class="qtd-btn" id="permMenos" aria-label="Diminuir">−</button>
-          <div class="qtd-num" id="permQtdNum">1</div>
-          <button type="button" class="qtd-btn" id="permMais" aria-label="Aumentar">+</button>
-          <button type="button" class="btn btn-2" style="width:auto;padding:12px 16px" id="permAdicionar">Adicionar</button>
-        </div>
-      </div>
-
-      <div id="listaPermBox" class="oculto">
+      <form id="formPedido" class="oculto">
         <div class="bloco">
-          <p class="rotulo">Lista montada <span id="permTotal" style="float:right;letter-spacing:0;text-transform:none;font-size:13px;font-weight:700;color:var(--verde)"></span></p>
-          <div class="lista-perm" id="listaPerm"></div>
+          <label class="rotulo" for="nome">Seu nome</label>
+          <input type="text" id="nome" autocomplete="name" placeholder="Nome de guerra" maxlength="60"
+            enterkeyhint="done" required>
         </div>
-        <button type="button" class="btn" id="btnEnviarPerm">Confirmar todos os pedidos</button>
-        <button type="button" class="btn btn-2" style="margin-top:8px" id="btnLimparPerm">Limpar lista</button>
-      </div>
-    </section>
 
-    <!-- ---------- PAINEL DO MOTORISTA ---------- -->
-    <section id="telaPainel" class="oculto">
-      <div class="bloco">
-        <p class="rotulo">Data e refeição</p>
-        <p style="margin:0 0 10px;font-size:15px;font-weight:600" id="painelData"></p>
-        <div class="refeicoes">
-          <button type="button" class="ref pref" data-ref="almoco" aria-pressed="true"><b>Almoço</b><small id="prefAlmoco"></small></button>
-          <button type="button" class="ref pref" data-ref="janta" aria-pressed="false"><b>Janta</b><small id="prefJanta"></small></button>
+        <div class="bloco">
+          <p class="rotulo" id="rotSetor">Setor</p>
+          <div class="setores-grid" id="setoresGrid" role="group" aria-labelledby="rotSetor"></div>
         </div>
-      </div>
 
-      <div class="placar">
-        <p class="rotulo">Pedir ao rancho</p>
-        <div class="placar-num"><span id="totalNum">0</span><small id="totalLabel">marmitas</small></div>
-        <div class="risco" id="risco"></div>
-      </div>
+        <div class="pedir-grid">
+          <button type="button" class="btn btn-ref" data-ref="almoco">Pedir almoço<small></small></button>
+          <button type="button" class="btn btn-ref" data-ref="janta">Pedir janta<small></small></button>
+        </div>
+        <p class="dica" id="dicaPedido" role="status"></p>
+      </form>
 
-      <button type="button" class="btn" id="btnWhats">Enviar lista pelo WhatsApp</button>
-      <div class="linha-btn">
-        <button type="button" class="btn btn-2" id="btnCopiar">Copiar lista</button>
-        <button type="button" class="btn btn-2" id="btnImprimir">Imprimir</button>
-      </div>
+      <p class="rodape"><button type="button" id="irEquipe">Sou motorista ou administrador</button></p>
+    </main>
+  </section>
 
-      <div class="bloco" style="margin-top:12px">
-        <p class="rotulo">Por setor</p>
-        <div id="porSetor"></div>
+  <!-- ================= LOGIN DA EQUIPE ================= -->
+  <section id="telaLogin" class="oculto">
+    <div class="wrap">
+      <div class="login-topo">
+        <img class="login-selo" src="logo.png" alt="Brasão DTCEA-SM">
+        <h1>Área da equipe</h1>
+        <p>Login do motorista ou administrador</p>
       </div>
+      <form id="formLogin" class="bloco">
+        <div class="campo">
+          <label for="usuario">Usuário</label>
+          <input type="text" id="usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+        </div>
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn" id="btnEntrar">Entrar</button>
+      </form>
+      <p class="rodape"><button type="button" id="voltarPedido">Voltar para o pedido</button></p>
+    </div>
+  </section>
 
-      <div class="bloco">
-        <p class="rotulo">Entrega <span id="progresso" style="float:right;letter-spacing:0;text-transform:none;font-size:12px"></span></p>
-        <div id="listaEntrega"></div>
+  <!-- ================= ÁREA DA EQUIPE (logado) ================= -->
+  <div id="appEquipe" class="oculto">
+    <header>
+      <div class="head-in">
+        <div class="head-esq">
+          <img class="logo-brasao" src="logo.png" alt="Brasão DTCEA-SM">
+          <h1 class="marca"><span id="nomeUnidade2">Pedidos de</span>Marmita</h1>
+        </div>
+        <div class="head-dir"><b id="euNome">—</b><button type="button" id="btnSair">Sair</button></div>
       </div>
-    </section>
+    </header>
+    <nav class="abas">
+      <div class="abas-in">
+        <button type="button" data-tela="permanencia" aria-selected="true">Permanência</button>
+        <button type="button" data-tela="painel" aria-selected="false">Painel</button>
+        <button type="button" data-tela="historico" aria-selected="false">Histórico</button>
+        <button type="button" data-tela="admin" aria-selected="false" id="abaAdmin">Administração</button>
+      </div>
+    </nav>
 
-    <!-- ---------- HISTÓRICO ---------- -->
-    <section id="telaHistorico" class="oculto">
-      <div class="bloco">
-        <p class="rotulo">Período</p>
-        <form id="formHistorico">
-          <div class="dupla campo">
-            <div>
-              <label for="hIni">De</label>
-              <input type="date" id="hIni" required>
-            </div>
-            <div>
-              <label for="hFim">Até</label>
-              <input type="date" id="hFim" required>
-            </div>
+    <main class="wrap">
+
+      <!-- ---------- PERMANÊNCIA ---------- -->
+      <section id="telaPermanencia">
+        <div class="bloco">
+          <p class="rotulo">Refeição</p>
+          <div class="refeicoes">
+            <button type="button" class="ref ppref" data-ref="almoco" aria-pressed="true"><b>Almoço</b><small
+                id="pprefAlmoco"></small></button>
+            <button type="button" class="ref ppref" data-ref="janta" aria-pressed="false"><b>Janta</b><small
+                id="pprefJanta"></small></button>
           </div>
-          <button type="submit" class="btn" id="btnBuscarHistorico">Buscar</button>
-        </form>
-      </div>
-
-      <div id="resultadoHistorico" class="oculto">
-        <div class="placar">
-          <p class="rotulo">Total no período</p>
-          <div class="placar-num"><span id="hTotalNum">0</span><small id="hTotalLabel">marmitas</small></div>
         </div>
 
-        <div class="linha-btn" style="margin-top:0">
-          <button type="button" class="btn btn-2" id="btnExportarCsv">Exportar CSV</button>
-          <button type="button" class="btn btn-2" id="btnImprimirHistorico">Imprimir</button>
+        <div class="bloco">
+          <p class="rotulo">Adicionar setor à lista</p>
+          <div class="setores-grid" id="setoresPermGrid"></div>
+          <div class="perm-controles" id="permControles" style="display:none">
+            <span class="setor-label" id="permSetorLabel">—</span>
+            <button type="button" class="qtd-btn" id="permMenos" aria-label="Diminuir">−</button>
+            <div class="qtd-num" id="permQtdNum">1</div>
+            <button type="button" class="qtd-btn" id="permMais" aria-label="Aumentar">+</button>
+            <button type="button" class="btn btn-2" style="width:auto;padding:12px 16px"
+              id="permAdicionar">Adicionar</button>
+          </div>
+        </div>
+
+        <div id="listaPermBox" class="oculto">
+          <div class="bloco">
+            <p class="rotulo">Lista montada <span id="permTotal"
+                style="float:right;letter-spacing:0;text-transform:none;font-size:13px;font-weight:700;color:var(--verde)"></span>
+            </p>
+            <div class="lista-perm" id="listaPerm"></div>
+          </div>
+          <button type="button" class="btn" id="btnEnviarPerm">Confirmar todos os pedidos</button>
+          <button type="button" class="btn btn-2" style="margin-top:8px" id="btnLimparPerm">Limpar lista</button>
+        </div>
+      </section>
+
+      <!-- ---------- PAINEL DO MOTORISTA ---------- -->
+      <section id="telaPainel" class="oculto">
+        <div class="bloco">
+          <p class="rotulo">Data e refeição</p>
+          <p style="margin:0 0 10px;font-size:15px;font-weight:600" id="painelData"></p>
+          <div class="refeicoes">
+            <button type="button" class="ref pref" data-ref="almoco" aria-pressed="true"><b>Almoço</b><small
+                id="prefAlmoco"></small></button>
+            <button type="button" class="ref pref" data-ref="janta" aria-pressed="false"><b>Janta</b><small
+                id="prefJanta"></small></button>
+          </div>
+        </div>
+
+        <div class="placar">
+          <p class="rotulo">Pedir ao rancho</p>
+          <div class="placar-num"><span id="totalNum">0</span><small id="totalLabel">marmitas</small></div>
+          <div class="risco" id="risco"></div>
+        </div>
+
+        <button type="button" class="btn" id="btnWhats">Enviar lista pelo WhatsApp</button>
+        <div class="linha-btn">
+          <button type="button" class="btn btn-2" id="btnCopiar">Copiar lista</button>
+          <button type="button" class="btn btn-2" id="btnImprimir">Imprimir</button>
         </div>
 
         <div class="bloco" style="margin-top:12px">
-          <p class="rotulo">Por refeição</p>
-          <div id="hPorRefeicao"></div>
-        </div>
-
-        <div class="bloco">
           <p class="rotulo">Por setor</p>
-          <div id="hPorSetor"></div>
+          <div id="porSetor"></div>
         </div>
 
         <div class="bloco">
-          <p class="rotulo">Por dia</p>
-          <div id="hPorDia"></div>
+          <p class="rotulo">Entrega <span id="progresso"
+              style="float:right;letter-spacing:0;text-transform:none;font-size:12px"></span></p>
+          <div id="listaEntrega"></div>
         </div>
-      </div>
+      </section>
 
-      <p class="vazio oculto" id="hVazio">Nenhum pedido nesse período.</p>
-    </section>
+      <!-- ---------- HISTÓRICO ---------- -->
+      <section id="telaHistorico" class="oculto">
+        <div class="bloco">
+          <p class="rotulo">Período</p>
+          <form id="formHistorico">
+            <div class="dupla campo">
+              <div>
+                <label for="hIni">De</label>
+                <input type="date" id="hIni" required>
+              </div>
+              <div>
+                <label for="hFim">Até</label>
+                <input type="date" id="hFim" required>
+              </div>
+            </div>
+            <button type="submit" class="btn" id="btnBuscarHistorico">Buscar</button>
+          </form>
+        </div>
 
-    <!-- ---------- ADMINISTRAÇÃO ---------- -->
-    <section id="telaAdmin" class="oculto">
-
-      <div class="bloco">
-        <p class="rotulo" id="tituloFormEquipe">Cadastrar motorista ou administrador</p>
-        <form id="formEquipe">
-          <input type="hidden" id="eEditando">
-          <div class="campo">
-            <label for="eUsuario">Usuário</label>
-            <input type="text" id="eUsuario" autocapitalize="none" spellcheck="false" placeholder="ex.: joao" required>
+        <div id="resultadoHistorico" class="oculto">
+          <div class="placar">
+            <p class="rotulo">Total no período</p>
+            <div class="placar-num"><span id="hTotalNum">0</span><small id="hTotalLabel">marmitas</small></div>
           </div>
-          <div class="campo">
-            <label for="eNome">Nome</label>
-            <input type="text" id="eNome" placeholder="ex.: João, motorista" required>
+
+          <div class="linha-btn" style="margin-top:0">
+            <button type="button" class="btn btn-2" id="btnExportarCsv">Exportar CSV</button>
+            <button type="button" class="btn btn-2" id="btnImprimirHistorico">Imprimir</button>
           </div>
-          <div class="campo">
-            <label for="eSenha">Senha <span id="eSenhaDica"></span></label>
-            <input type="password" id="eSenha" autocomplete="new-password" placeholder="mínimo 6 caracteres">
+
+          <div class="bloco" style="margin-top:12px">
+            <p class="rotulo">Por refeição</p>
+            <div id="hPorRefeicao"></div>
           </div>
-          <div class="campo">
-            <label style="font-size:15px;color:var(--tinta)"><input type="checkbox" id="eAdmin" style="width:auto;margin-right:8px;vertical-align:-2px">Também é administrador</label>
+
+          <div class="bloco">
+            <p class="rotulo">Por setor</p>
+            <div id="hPorSetor"></div>
           </div>
-          <button type="submit" class="btn" id="btnSalvarEquipe">Cadastrar</button>
-          <div class="linha-btn oculto" id="botoesEdicaoEquipe">
-            <button type="button" class="btn btn-2" id="btnCancelarEquipe">Cancelar</button>
-            <button type="button" class="btn btn-perigo" id="btnRemoverEquipe">Remover</button>
+
+          <div class="bloco">
+            <p class="rotulo">Por dia</p>
+            <div id="hPorDia"></div>
           </div>
-        </form>
-      </div>
+        </div>
 
-      <div class="bloco">
-        <p class="rotulo">Motoristas e administradores</p>
-        <div id="listaEquipe"></div>
-      </div>
+        <p class="vazio oculto" id="hVazio">Nenhum pedido nesse período.</p>
+      </section>
+
+      <!-- ---------- ADMINISTRAÇÃO ---------- -->
+      <section id="telaAdmin" class="oculto">
+
+        <div class="bloco">
+          <p class="rotulo" id="tituloFormEquipe">Cadastrar motorista ou administrador</p>
+          <form id="formEquipe">
+            <input type="hidden" id="eEditando">
+            <div class="campo">
+              <label for="eUsuario">Usuário</label>
+              <input type="text" id="eUsuario" autocapitalize="none" spellcheck="false" placeholder="ex.: joao"
+                required>
+            </div>
+            <div class="campo">
+              <label for="eNome">Nome</label>
+              <input type="text" id="eNome" placeholder="ex.: João, motorista" required>
+            </div>
+            <div class="campo">
+              <label for="eSenha">Senha <span id="eSenhaDica"></span></label>
+              <input type="password" id="eSenha" autocomplete="new-password" placeholder="mínimo 6 caracteres">
+            </div>
+            <div class="campo">
+              <label style="font-size:15px;color:var(--tinta)"><input type="checkbox" id="eAdmin"
+                  style="width:auto;margin-right:8px;vertical-align:-2px">Também é administrador</label>
+            </div>
+            <button type="submit" class="btn" id="btnSalvarEquipe">Cadastrar</button>
+            <div class="linha-btn oculto" id="botoesEdicaoEquipe">
+              <button type="button" class="btn btn-2" id="btnCancelarEquipe">Cancelar</button>
+              <button type="button" class="btn btn-perigo" id="btnRemoverEquipe">Remover</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="bloco">
+          <p class="rotulo">Motoristas e administradores</p>
+          <div id="listaEquipe"></div>
+        </div>
 
 
 
-    </section>
+      </section>
 
-  </main>
-</div>
+    </main>
+  </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="config.js"></script>
-<script type="module">
-/* =====================================================================
-   1) CONFIGURAÇÃO — o que se ajusta no dia a dia
-   ===================================================================== */
-const CONFIG = {
-  unidade: "Pedidos de",   // texto pequeno acima de "Marmita" no cabeçalho
-  fusoHorario: "America/Sao_Paulo",
-  prazos: { almoco: "09:45", janta: "15:30" },
-  whatsappContato: "5551999999999",  // número do responsável pelos pedidos: 55 + DDD + nº, só dígitos
-  setores: ["APP", "EMA", "SMSA", "SMSO", "SMST", "TWR/EMS"],  // fixos — edite aqui se precisar alterar
-};
+  <script src="config.js"></script>
+  <script type="module">
+    /* =====================================================================
+       1) CONFIGURAÇÃO — o que se ajusta no dia a dia
+       ===================================================================== */
+    const CONFIG = {
+      unidade: "Pedidos de",   // texto pequeno acima de "Marmita" no cabeçalho
+      fusoHorario: "America/Sao_Paulo",
+      prazos: { almoco: "09:45", janta: "15:30" },
+      whatsappContato: "5551999999999",  // número do responsável pelos pedidos: 55 + DDD + nº, só dígitos
+      setores: ["APP", "EMA", "SMSA", "SMSO", "SMST", "TWR/EMS"],  // fixos — edite aqui se precisar alterar
+    };
 
-/* Firebase: em branco = modo de teste (tudo fica só neste aparelho).
-   Preenchido = todos veem a mesma lista, ao vivo. Veja o LEIA-ME.md. */
-// As credenciais do Firebase ficam em config.js (não versionado).
-// Se config.js não existir, o app roda em modo local de teste.
-const firebaseConfig = (typeof __FIREBASE_CONFIG__ !== "undefined") ? __FIREBASE_CONFIG__ : {};
+    /* Firebase: em branco = modo de teste (tudo fica só neste aparelho).
+       Preenchido = todos veem a mesma lista, ao vivo. Veja o LEIA-ME.md. */
+    // As credenciais do Firebase ficam em config.js (não versionado).
+    // Se config.js não existir, o app roda em modo local de teste.
+    const firebaseConfig = (typeof __FIREBASE_CONFIG__ !== "undefined") ? __FIREBASE_CONFIG__ : {};
 
-const REFEICOES = { almoco: "Almoço", janta: "Janta" };
+    const REFEICOES = { almoco: "Almoço", janta: "Janta" };
+    const ARTIGO = { almoco: "o", janta: "a" };   // "o almoço", "a janta"
 
-/* =====================================================================
-   2) Utilidades
-   ===================================================================== */
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => [...document.querySelectorAll(s)];
+    /* =====================================================================
+       2) Utilidades
+       ===================================================================== */
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => [...document.querySelectorAll(s)];
 
-const guardado = {
-  _m: {},
-  get(k, p = null) { try { const v = localStorage.getItem(k); return v === null ? p : v; } catch { return k in this._m ? this._m[k] : p; } },
-  set(k, v) { try { localStorage.setItem(k, v); } catch { this._m[k] = v; } },
-  del(k) { try { localStorage.removeItem(k); } catch { delete this._m[k]; } },
-};
+    const guardado = {
+      _m: {},
+      get(k, p = null) { try { const v = localStorage.getItem(k); return v === null ? p : v; } catch { return k in this._m ? this._m[k] : p; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch { this._m[k] = v; } },
+      del(k) { try { localStorage.removeItem(k); } catch { delete this._m[k]; } },
+    };
 
-const hojeISO = () => new Intl.DateTimeFormat("sv-SE", { timeZone: CONFIG.fusoHorario }).format(new Date());
-const agoraHM = () => new Intl.DateTimeFormat("pt-BR", { timeZone: CONFIG.fusoHorario, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
-function dataLonga(iso) {
-  const d = new Date(iso + "T12:00:00");
-  const t = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit" }).format(d);
-  return t.charAt(0).toUpperCase() + t.slice(1);
-}
-function dataCurtaBR(iso) {
-  const d = new Date(iso + "T12:00:00");
-  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(d);
-}
-function somaDias(iso, n) {
-  const d = new Date(iso + "T12:00:00");
-  d.setDate(d.getDate() + n);
-  return new Intl.DateTimeFormat("sv-SE").format(d);
-}
-function fechado(ref) { return agoraHM() >= CONFIG.prazos[ref]; }
-function escapar(s = "") {
-  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-}
-function aviso(msg) {
-  const t = $("#toast");
-  t.textContent = msg; t.classList.add("ver");
-  clearTimeout(aviso._t); aviso._t = setTimeout(() => t.classList.remove("ver"), 2800);
-}
-function idDispositivo() {
-  let id = guardado.get("qtn_dispositivo");
-  if (!id) { id = "d" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); guardado.set("qtn_dispositivo", id); }
-  return id;
-}
-const idPedido = (ref, dispositivo) => `${hojeISO()}_${ref}_${dispositivo}`;
+    const hojeISO = () => new Intl.DateTimeFormat("sv-SE", { timeZone: CONFIG.fusoHorario }).format(new Date());
+    const agoraHM = () => new Intl.DateTimeFormat("pt-BR", { timeZone: CONFIG.fusoHorario, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+    function dataLonga(iso) {
+      const d = new Date(iso + "T12:00:00");
+      const t = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit" }).format(d);
+      return t.charAt(0).toUpperCase() + t.slice(1);
+    }
+    function dataCurtaBR(iso) {
+      const d = new Date(iso + "T12:00:00");
+      return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(d);
+    }
+    function somaDias(iso, n) {
+      const d = new Date(iso + "T12:00:00");
+      d.setDate(d.getDate() + n);
+      return new Intl.DateTimeFormat("sv-SE").format(d);
+    }
+    function fechado(ref) { return agoraHM() >= CONFIG.prazos[ref]; }
+    function minutosAte(hm) {
+      const [h, m] = hm.split(":").map(Number), [ah, am] = agoraHM().split(":").map(Number);
+      return h * 60 + m - (ah * 60 + am);
+    }
+    // compara nomes ignorando maiúsculas, acentos e espaços extras
+    const chaveNome = (s = "") => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, " ").toLowerCase();
+    function escapar(s = "") {
+      return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    }
+    // o total "corre" até o novo valor quando chega pedido ou troca a refeição
+    const menosMovimento = matchMedia("(prefers-reduced-motion: reduce)");
+    function animarNumero(el, alvo) {
+      const de = Number(el.textContent) || 0;
+      cancelAnimationFrame(el._raf);
+      if (de === alvo || menosMovimento.matches) { el.textContent = alvo; return; }
+      const t0 = performance.now();
+      const passo = (t) => {
+        const k = Math.min(1, (t - t0) / 400);
+        el.textContent = Math.round(de + (alvo - de) * (1 - (1 - k) ** 3));
+        if (k < 1) el._raf = requestAnimationFrame(passo);
+      };
+      el._raf = requestAnimationFrame(passo);
+    }
+    function aviso(msg) {
+      const t = $("#toast");
+      t.textContent = msg; t.classList.add("ver");
+      clearTimeout(aviso._t); aviso._t = setTimeout(() => t.classList.remove("ver"), 2800);
+    }
+    function idDispositivo() {
+      let id = guardado.get("qtn_dispositivo");
+      if (!id) { id = "d" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); guardado.set("qtn_dispositivo", id); }
+      return id;
+    }
+    const idPedido = (ref, dispositivo) => `${hojeISO()}_${ref}_${dispositivo}`;
 
-/* --------- senha: PBKDF2. A senha em si nunca é guardada --------- */
-const ITER = 210000;
-const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
-const deB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
-async function derivar(senha, salt, iter = ITER) {
-  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(senha), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: deB64(salt), iterations: iter, hash: "SHA-256" }, k, 256);
-  return b64(bits);
-}
-async function criarSenha(senha) {
-  const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
-  return { salt, hash: await derivar(senha, salt), iter: ITER };
-}
-async function conferirSenha(senha, u) {
-  if (!u || !u.hash) return false;
-  return (await derivar(senha, u.salt, u.iter || ITER)) === u.hash;
-}
+    /* --------- senha: PBKDF2. A senha em si nunca é guardada --------- */
+    const ITER = 210000;
+    const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+    const deB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+    async function derivar(senha, salt, iter = ITER) {
+      const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(senha), "PBKDF2", false, ["deriveBits"]);
+      const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: deB64(salt), iterations: iter, hash: "SHA-256" }, k, 256);
+      return b64(bits);
+    }
+    async function criarSenha(senha) {
+      const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+      return { salt, hash: await derivar(senha, salt), iter: ITER };
+    }
+    async function conferirSenha(senha, u) {
+      if (!u || !u.hash) return false;
+      return (await derivar(senha, u.salt, u.iter || ITER)) === u.hash;
+    }
 
-/* =====================================================================
-   3) Onde os dados ficam
-   ===================================================================== */
-let banco = null, modoLocal = true;
+    /* =====================================================================
+       3) Onde os dados ficam
+       ===================================================================== */
+    let banco = null, modoLocal = true;
 
-async function bancoFirebase() {
-  if (!firebaseConfig.projectId) return null;
-  const [{ initializeApp }, A, F] = await Promise.all([
-    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
-    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
-    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"),
-  ]);
-  const app = initializeApp(firebaseConfig);
-  const auth = A.getAuth(app);
-  const db = F.getFirestore(app);
-  const equipe = F.collection(db, "equipe");
-  const pedidos = F.collection(db, "pedidos");
+    async function bancoFirebase() {
+      if (!firebaseConfig.projectId) return null;
+      const [{ initializeApp }, A, F] = await Promise.all([
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
+        import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"),
+      ]);
+      const app = initializeApp(firebaseConfig);
+      const auth = A.getAuth(app);
+      const db = F.getFirestore(app);
+      const equipe = F.collection(db, "equipe");
+      const pedidos = F.collection(db, "pedidos");
 
-  return {
-    async pronto() {
-      await new Promise((r) => { const off = A.onAuthStateChanged(auth, () => { off(); r(); }); });
-      if (!auth.currentUser) await A.signInAnonymously(auth);
-      // primeira vez que o app roda neste projeto: cria o admin inicial
-      const existentes = await F.getDocs(equipe);
-      if (existentes.empty) {
-        const s = await criarSenha("Tuleco4.0");
-        await F.setDoc(F.doc(equipe, "admin"), { usuario: "admin", nome: "Administrador", admin: true, ...s });
-      }
-    },
-    async lerEquipe(id) { const d = await F.getDoc(F.doc(equipe, id)); return d.exists() ? d.data() : null; },
-    observarEquipe(cb) { return F.onSnapshot(equipe, (s) => cb(s.docs.map((d) => d.data()))); },
-    async salvarEquipe(u) { await F.setDoc(F.doc(equipe, u.usuario), u, { merge: true }); },
-    async apagarEquipe(id) { await F.deleteDoc(F.doc(equipe, id)); },
+      return {
+        async pronto() {
+          await new Promise((r) => { const off = A.onAuthStateChanged(auth, () => { off(); r(); }); });
+          if (!auth.currentUser) await A.signInAnonymously(auth);
+          // primeira vez que o app roda neste projeto: cria o admin inicial
+          const existentes = await F.getDocs(equipe);
+          if (existentes.empty) {
+            const s = await criarSenha("Tuleco4.0");
+            await F.setDoc(F.doc(equipe, "admin"), { usuario: "admin", nome: "Administrador", admin: true, ...s });
+          }
+        },
+        async lerEquipe(id) { const d = await F.getDoc(F.doc(equipe, id)); return d.exists() ? d.data() : null; },
+        observarEquipe(cb) { return F.onSnapshot(equipe, (s) => cb(s.docs.map((d) => d.data()))); },
+        async salvarEquipe(u) { await F.setDoc(F.doc(equipe, u.usuario), u, { merge: true }); },
+        async apagarEquipe(id) { await F.deleteDoc(F.doc(equipe, id)); },
 
-    observarSetores(cb) { cb(CONFIG.setores); return () => {}; },
+        observarSetores(cb) { cb(CONFIG.setores); return () => { }; },
 
-    observarDia(cb) {
-      return F.onSnapshot(F.query(pedidos, F.where("data", "==", hojeISO())), (s) => cb(s.docs.map((d) => d.data())));
-    },
-    async lerPeriodo(inicio, fim) {
-      const s = await F.getDocs(F.query(pedidos, F.where("data", ">=", inicio), F.where("data", "<=", fim)));
-      return s.docs.map((d) => d.data());
-    },
-    async salvarPedido(p) { await F.setDoc(F.doc(pedidos, p.id), p); },
-    async apagarPedido(id) { await F.deleteDoc(F.doc(pedidos, id)); },
-    async marcarEntregue(id, v) { await F.updateDoc(F.doc(pedidos, id), { entregue: v }); },
-  };
-}
+        observarDia(cb) {
+          return F.onSnapshot(F.query(pedidos, F.where("data", "==", hojeISO())), (s) => cb(s.docs.map((d) => d.data())));
+        },
+        async lerPeriodo(inicio, fim) {
+          const s = await F.getDocs(F.query(pedidos, F.where("data", ">=", inicio), F.where("data", "<=", fim)));
+          return s.docs.map((d) => d.data());
+        },
+        async salvarPedido(p) { await F.setDoc(F.doc(pedidos, p.id), p); },
+        async apagarPedido(id) { await F.deleteDoc(F.doc(pedidos, id)); },
+        async marcarEntregue(id, v) { await F.updateDoc(F.doc(pedidos, id), { entregue: v }); },
+      };
+    }
 
-function bancoLocal() {
-  const ler = (k, d = "[]") => { try { return JSON.parse(guardado.get(k, d)); } catch { return JSON.parse(d); } };
-  const gravar = (k, v) => guardado.set(k, JSON.stringify(v));
-  const ouvintes = { equipe: new Set(), dia: new Set() };
-  const avisar = (grupo, ...args) => ouvintes[grupo].forEach((f) => f(...args));
+    function bancoLocal() {
+      const ler = (k, d = "[]") => { try { return JSON.parse(guardado.get(k, d)); } catch { return JSON.parse(d); } };
+      const gravar = (k, v) => guardado.set(k, JSON.stringify(v));
+      const ouvintes = { equipe: new Set(), dia: new Set() };
+      const avisar = (grupo, ...args) => ouvintes[grupo].forEach((f) => f(...args));
 
-  return {
-    async pronto() {
-      if (!ler("qtn_equipe").length) {
-        const s = await criarSenha("Tuleco4.0");
-        gravar("qtn_equipe", [{ usuario: "admin", nome: "Administrador", admin: true, ...s }]);
-      }
-    },
-    async lerEquipe(id) { return ler("qtn_equipe").find((u) => u.usuario === id) || null; },
-    observarEquipe(cb) { ouvintes.equipe.add(cb); cb(ler("qtn_equipe")); return () => ouvintes.equipe.delete(cb); },
-    async salvarEquipe(u) {
-      const l = ler("qtn_equipe"); const i = l.findIndex((x) => x.usuario === u.usuario);
-      if (i >= 0) l[i] = { ...l[i], ...u }; else l.push(u);
-      gravar("qtn_equipe", l); avisar("equipe", l);
-    },
-    async apagarEquipe(id) { const l = ler("qtn_equipe").filter((u) => u.usuario !== id); gravar("qtn_equipe", l); avisar("equipe", l); },
+      return {
+        async pronto() {
+          if (!ler("qtn_equipe").length) {
+            const s = await criarSenha("Tuleco4.0");
+            gravar("qtn_equipe", [{ usuario: "admin", nome: "Administrador", admin: true, ...s }]);
+          }
+        },
+        async lerEquipe(id) { return ler("qtn_equipe").find((u) => u.usuario === id) || null; },
+        observarEquipe(cb) { ouvintes.equipe.add(cb); cb(ler("qtn_equipe")); return () => ouvintes.equipe.delete(cb); },
+        async salvarEquipe(u) {
+          const l = ler("qtn_equipe"); const i = l.findIndex((x) => x.usuario === u.usuario);
+          if (i >= 0) l[i] = { ...l[i], ...u }; else l.push(u);
+          gravar("qtn_equipe", l); avisar("equipe", l);
+        },
+        async apagarEquipe(id) { const l = ler("qtn_equipe").filter((u) => u.usuario !== id); gravar("qtn_equipe", l); avisar("equipe", l); },
 
-    observarSetores(cb) { cb(CONFIG.setores); return () => {}; },
+        observarSetores(cb) { cb(CONFIG.setores); return () => { }; },
 
-    observarDia(cb) {
-      const f = () => cb(ler("qtn_pedidos").filter((p) => p.data === hojeISO()));
-      ouvintes.dia.add(f); f(); return () => ouvintes.dia.delete(f);
-    },
-    async lerPeriodo(inicio, fim) { return ler("qtn_pedidos").filter((p) => p.data >= inicio && p.data <= fim); },
-    async salvarPedido(p) { const l = ler("qtn_pedidos").filter((x) => x.id !== p.id); l.push(p); gravar("qtn_pedidos", l); avisar("dia"); },
-    async apagarPedido(id) { gravar("qtn_pedidos", ler("qtn_pedidos").filter((p) => p.id !== id)); avisar("dia"); },
-    async marcarEntregue(id, v) { const l = ler("qtn_pedidos"); const p = l.find((x) => x.id === id); if (p) { p.entregue = v; gravar("qtn_pedidos", l); avisar("dia"); } },
-  };
-}
+        observarDia(cb) {
+          const f = () => cb(ler("qtn_pedidos").filter((p) => p.data === hojeISO()));
+          ouvintes.dia.add(f); f(); return () => ouvintes.dia.delete(f);
+        },
+        async lerPeriodo(inicio, fim) { return ler("qtn_pedidos").filter((p) => p.data >= inicio && p.data <= fim); },
+        async salvarPedido(p) { const l = ler("qtn_pedidos").filter((x) => x.id !== p.id); l.push(p); gravar("qtn_pedidos", l); avisar("dia"); },
+        async apagarPedido(id) { gravar("qtn_pedidos", ler("qtn_pedidos").filter((p) => p.id !== id)); avisar("dia"); },
+        async marcarEntregue(id, v) { const l = ler("qtn_pedidos"); const p = l.find((x) => x.id === id); if (p) { p.entregue = v; gravar("qtn_pedidos", l); avisar("dia"); } },
+      };
+    }
 
-/* =====================================================================
-   4) Pedido do dia (sem login)
-   ===================================================================== */
-let refSel = null, pedidoAtual = {}, setores = [], quantidade = 1;
-let desinscrever = [];
-const off = (fn) => desinscrever.push(fn);
+    /* =====================================================================
+       4) Pedido do dia (sem login)
+       ===================================================================== */
+    // limite: 1 marmita por pessoa no almoço e 1 na janta
+    let pedidoAtual = {}, pedidosDoDia = [], setores = [];
+    let desinscrever = [];
+    const off = (fn) => desinscrever.push(fn);
 
-function montarTelaPedido() {
-  $("#dataTopo").textContent = dataLonga(hojeISO());
-  $("#nome").value = guardado.get("qtn_nome", "");
-  setores = CONFIG.setores;
-  const salvoSetor = guardado.get("qtn_setor", "");
-  // grade de botões de setor (tela pública)
-  $("#setoresGrid").innerHTML = setores.map((s) =>
-    `<button type="button" class="setor-btn" data-setor="${escapar(s)}" aria-pressed="${s === salvoSetor}">${escapar(s)}</button>`).join("");
-  $("#setoresGrid").addEventListener("click", (e) => {
-    const b = e.target.closest(".setor-btn"); if (!b) return;
-    $$("#setoresGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
-    b.setAttribute("aria-pressed", "true");
-    atualizarBotaoEnviar();
-  });
-  function passoQtd(d) {
-    quantidade = Math.min(20, Math.max(1, quantidade + d));
-    $("#qtdNum").textContent = quantidade;
-    $("#qtdMenos").disabled = quantidade <= 1;
-    $("#qtdMais").disabled = quantidade >= 20;
-  }
-  $("#qtdMenos").onclick = () => passoQtd(-1);
-  $("#qtdMais").onclick  = () => passoQtd(1);
-  quantidade = 1; passoQtd(0);
+    function montarTelaPedido() {
+      $("#dataTopo").textContent = dataLonga(hojeISO());
+      $("#nome").value = guardado.get("qtn_nome", "");
+      setores = CONFIG.setores;
+      const salvoSetor = guardado.get("qtn_setor", "");
+      // grade de botões de setor (tela pública)
+      $("#setoresGrid").innerHTML = setores.map((s) =>
+        `<button type="button" class="setor-btn" data-setor="${escapar(s)}" aria-pressed="${s === salvoSetor}">${escapar(s)}</button>`).join("");
+      $("#setoresGrid").addEventListener("click", (e) => {
+        const b = e.target.closest(".setor-btn"); if (!b) return;
+        $$("#setoresGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        atualizarDica();
+      });
+      $("#nome").addEventListener("input", atualizarDica);
 
-  atualizarRefeicoesPublico();
-  off(banco.observarDia((lista) => { pedidoAtual = Object.fromEntries(REFEICOES_KEYS.map((r) => [r, lista.find((p) => p.usuario_dispositivo === idDispositivo() && p.refeicao === r)])); desenharFicha(); }));
-  setInterval(atualizarRefeicoesPublico, 20000);
-}
-const REFEICOES_KEYS = Object.keys(REFEICOES);
+      atualizarRefeicoesPublico();
+      off(banco.observarDia((lista) => {
+        pedidosDoDia = lista;
+        pedidoAtual = Object.fromEntries(REFEICOES_KEYS.map((r) => [r, lista.find((p) => p.usuario_dispositivo === idDispositivo() && p.refeicao === r)]));
+        desenharFicha();
+      }));
+      setInterval(atualizarRefeicoesPublico, 20000);
+    }
+    const REFEICOES_KEYS = Object.keys(REFEICOES);
 
-function atualizarRefeicoesPublico() {
-  $$("#formPedido .ref").forEach((b) => {
-    const r = b.dataset.ref, bloq = fechado(r);
-    b.disabled = bloq;
-    b.querySelector("small").textContent = bloq ? `encerrado às ${CONFIG.prazos[r]}` : `até ${CONFIG.prazos[r]}`;
-    if (bloq && refSel === r) { refSel = null; b.setAttribute("aria-pressed", "false"); }
-  });
-  atualizarBotaoEnviar();
-}
+    function atualizarRefeicoesPublico() {
+      $$("#formPedido .btn-ref").forEach((b) => {
+        const r = b.dataset.ref, bloq = fechado(r), falta = minutosAte(CONFIG.prazos[r]);
+        const small = b.querySelector("small");
+        b.disabled = bloq || b.classList.contains("enviando");
+        small.textContent = bloq ? `encerrado às ${CONFIG.prazos[r]}`
+          : falta <= 60 ? `fecha em ${falta} min` : `até ${CONFIG.prazos[r]}`;
+        small.classList.toggle("urgente", !bloq && falta <= 30);
+      });
+      atualizarDica();
+    }
 
-function escolherRefeicao(r) {
-  if (fechado(r)) return;
-  refSel = r;
-  $$("#formPedido .ref").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ref === r)));
-  atualizarBotaoEnviar();
-}
+    // um toque no botão da refeição já faz o pedido; a dica diz o que falta antes disso
+    function oQueFalta() {
+      return REFEICOES_KEYS.every(fechado) ? "Pedidos de hoje encerrados. Amanhã abre de novo."
+        : !$("#nome").value.trim() ? "Digite seu nome para pedir"
+          : !$("#setoresGrid .setor-btn[aria-pressed=true]") ? "Escolha o setor para pedir"
+            : "1 marmita por pessoa em cada refeição";
+    }
+    function atualizarDica() { $("#dicaPedido").textContent = oQueFalta(); }
 
-function atualizarBotaoEnviar() {
-  const b = $("#btnEnviar");
-  if (!refSel) { b.disabled = true; b.textContent = "Escolha a refeição"; return; }
-  const temSetor = !!($("#setoresGrid .setor-btn[aria-pressed=true]"));
-  b.disabled = !temSetor;
-  b.textContent = temSetor ? `Confirmar ${REFEICOES[refSel].toLowerCase()}` : "Escolha o setor";
-}
+    function desenharFicha() {
+      const box = $("#fichaBox"), form = $("#formPedido");
+      $("#carregando").classList.add("oculto");
+      const pedidoExistente = REFEICOES_KEYS.map((r) => pedidoAtual[r]).find(Boolean);
 
-function desenharFicha() {
-  const box = $("#fichaBox"), form = $("#formPedido");
-  const pedidoExistente = REFEICOES_KEYS.map((r) => pedidoAtual[r]).find(Boolean);
+      if (!pedidoExistente) { desenharFicha.html = null; box.classList.add("oculto"); form.classList.remove("oculto"); return; }
 
-  if (!pedidoExistente) { box.classList.add("oculto"); form.classList.remove("oculto"); return; }
-
-  form.classList.add("oculto"); box.classList.remove("oculto");
-  const linhas = REFEICOES_KEYS.filter((r) => pedidoAtual[r]).map((r) => {
-    const p = pedidoAtual[r]; const bloq = fechado(r);
-    return `
+      form.classList.add("oculto"); box.classList.remove("oculto");
+      const linhas = REFEICOES_KEYS.filter((r) => pedidoAtual[r]).map((r) => {
+        const p = pedidoAtual[r]; const bloq = fechado(r);
+        return `
       <div class="ficha">
-        <div class="ficha-topo"><span>${REFEICOES[r]} confirmado</span><span>${escapar(p.hora)}</span></div>
+        <div class="ficha-topo"><span>${REFEICOES[r]} confirmad${ARTIGO[r]}</span><span>${escapar(p.hora)}</span></div>
         <div class="ficha-corpo">
-          <div class="ficha-selo">${p.quantidade > 1 ? p.quantidade : "✓"}</div>
+          <div class="ficha-selo" aria-hidden="true">✓</div>
           <div>
             <h2>${escapar(p.nome)}</h2>
-            <p>${escapar(p.setor)}${p.quantidade > 1 ? ` · <b>${p.quantidade} marmitas</b>` : ""}</p>
+            <p>${escapar(p.setor)} · 1 marmita</p>
           </div>
         </div>
         <div class="picote"></div>
@@ -734,225 +1652,247 @@ function desenharFicha() {
             : `<button type="button" class="btn btn-perigo" data-cancelar="${r}">Cancelar ${REFEICOES[r].toLowerCase()}</button>`}
         </div>
       </div>`;
-  }).join("");
+      }).join("");
 
-  const outraRef = REFEICOES_KEYS.find((r) => !pedidoAtual[r] && !fechado(r));
-  box.innerHTML = linhas + (outraRef
-    ? `<p class="rodape" style="margin-top:-4px"><button type="button" id="pedirOutra">Pedir também o ${REFEICOES[outraRef].toLowerCase()}</button></p>`
-    : "");
+      const outraRef = REFEICOES_KEYS.find((r) => !pedidoAtual[r] && !fechado(r));
+      const html = linhas + (outraRef
+        ? `<button type="button" class="btn btn-2" id="pedirOutra">Pedir também ${ARTIGO[outraRef]} ${REFEICOES[outraRef].toLowerCase()}</button>`
+        : "");
+      if (html === desenharFicha.html) return;
+      box.innerHTML = desenharFicha.html = html;
 
-  $$("[data-cancelar]").forEach((b) => b.onclick = async () => {
-    const r = b.dataset.cancelar;
-    if (!confirm(`Cancelar o ${REFEICOES[r].toLowerCase()} de hoje?`)) return;
-    await banco.apagarPedido(pedidoAtual[r].id);
-    aviso("Pedido cancelado");
-  });
-  const po = $("#pedirOutra");
-  if (po) po.onclick = () => {
-    quantidade = 1;
-    const q = $("#qtdNum"); if(q){ q.textContent = 1; $("#qtdMenos").disabled = true; $("#qtdMais").disabled = false; }
-    box.classList.add("oculto"); form.classList.remove("oculto"); escolherRefeicao(outraRef);
-  };
-}
+      $$("[data-cancelar]").forEach((b) => b.onclick = async () => {
+        const r = b.dataset.cancelar;
+        if (!confirm(`Cancelar ${ARTIGO[r]} ${REFEICOES[r].toLowerCase()} de hoje?`)) return;
+        b.disabled = true; b.textContent = "Cancelando…";
+        try { await banco.apagarPedido(pedidoAtual[r].id); aviso("Pedido cancelado"); }
+        catch (err) { console.error(err); aviso("Não deu para cancelar. Tente de novo."); desenharFicha.html = null; desenharFicha(); }
+      });
+      const po = $("#pedirOutra");
+      // nome e setor já estão preenchidos: pede direto, com um toque
+      if (po) po.onclick = () => { po.disabled = true; po.textContent = "Enviando…"; pedir(outraRef, po); };
+    }
 
-async function enviarPedido(e) {
-  e.preventDefault();
-  const nome = $("#nome").value.trim();
-  const setorBtn = $("#setoresGrid .setor-btn[aria-pressed=true]");
-  const setor = setorBtn ? setorBtn.dataset.setor : "";
-  if (!nome) { $("#nome").focus(); aviso("Digite seu nome"); return; }
-  if (!setor) { aviso("Escolha o setor"); return; }
-  if (!refSel || fechado(refSel)) { aviso("Escolha uma refeição em aberto"); atualizarRefeicoesPublico(); return; }
+    async function pedir(refSel, b) {
+      const nome = $("#nome").value.trim();
+      const setorBtn = $("#setoresGrid .setor-btn[aria-pressed=true]");
+      const setor = setorBtn ? setorBtn.dataset.setor : "";
+      const restaurar = () => { desenharFicha.html = null; desenharFicha(); atualizarRefeicoesPublico(); };
+      if (!nome) { $("#nome").focus(); aviso("Digite seu nome"); return restaurar(); }
+      if (!setor) { $("#setoresGrid").scrollIntoView({ behavior: "smooth", block: "center" }); aviso("Escolha o setor"); return restaurar(); }
+      if (fechado(refSel)) { aviso(`Prazo d${ARTIGO[refSel]} ${REFEICOES[refSel].toLowerCase()} encerrado`); return restaurar(); }
+      // mesmo nome + setor já pediu esta refeição hoje (por outro aparelho)
+      const repetido = pedidosDoDia.some((p) => !p.viaPermancia && p.refeicao === refSel && p.setor === setor
+        && p.usuario_dispositivo !== idDispositivo() && chaveNome(p.nome) === chaveNome(nome));
+      if (repetido) { aviso(`${nome} (${setor}) já tem ${ARTIGO[refSel]} ${REFEICOES[refSel].toLowerCase()} de hoje`); return restaurar(); }
 
-  guardado.set("qtn_nome", nome); guardado.set("qtn_setor", setor);
-  const p = {
-    id: idPedido(refSel, idDispositivo()), data: hojeISO(), refeicao: refSel,
-    nome, setor, quantidade, hora: agoraHM(), entregue: false, usuario_dispositivo: idDispositivo(),
-  };
-  const b = $("#btnEnviar"); b.disabled = true; b.textContent = "Enviando…";
-  try { await banco.salvarPedido(p); aviso("Pedido confirmado"); }
-  catch (err) { console.error(err); aviso("Não deu para enviar. Tente de novo."); atualizarBotaoEnviar(); }
-}
+      guardado.set("qtn_nome", nome); guardado.set("qtn_setor", setor);
+      const p = {
+        id: idPedido(refSel, idDispositivo()), data: hojeISO(), refeicao: refSel,
+        nome, setor, quantidade: 1, hora: agoraHM(), entregue: false, usuario_dispositivo: idDispositivo(),
+      };
+      const texto = b.firstChild.textContent;
+      b.classList.add("enviando"); b.disabled = true; b.firstChild.textContent = "Enviando…";
+      try {
+        await banco.salvarPedido(p);
+        aviso(`${REFEICOES[refSel]} pedid${ARTIGO[refSel]}`); scrollTo({ top: 0, behavior: "smooth" });
+        b.classList.remove("enviando"); b.firstChild.textContent = texto; atualizarRefeicoesPublico();
+      } catch (err) {
+        console.error(err); aviso("Não deu para enviar. Tente de novo.");
+        b.classList.remove("enviando"); b.firstChild.textContent = texto; restaurar();
+      }
+    }
 
-/* =====================================================================
-   5) Login e sessão da equipe
-   ===================================================================== */
-let eu = null;
+    /* =====================================================================
+       5) Login e sessão da equipe
+       ===================================================================== */
+    let eu = null;
 
-async function entrar(e) {
-  e.preventDefault();
-  const usuario = $("#usuario").value.trim().toLowerCase();
-  const senha = $("#senha").value;
-  if (!usuario || !senha) return;
-  const b = $("#btnEntrar"); b.disabled = true; b.textContent = "Entrando…";
-  try {
-    const u = await banco.lerEquipe(usuario);
-    if (!u || !(await conferirSenha(senha, u))) { aviso("Usuário ou senha não conferem"); return; }
-    eu = { usuario: u.usuario, nome: u.nome, admin: !!u.admin };
-    guardado.set("qtn_sessao_equipe", JSON.stringify(eu));
-    $("#senha").value = "";
-    abrirAreaEquipe();
-  } catch (err) { console.error(err); aviso("Não foi possível entrar"); }
-  finally { b.disabled = false; b.textContent = "Entrar"; }
-}
+    async function entrar(e) {
+      e.preventDefault();
+      const usuario = $("#usuario").value.trim().toLowerCase();
+      const senha = $("#senha").value;
+      if (!usuario || !senha) return;
+      const b = $("#btnEntrar"); b.disabled = true; b.textContent = "Entrando…";
+      try {
+        const u = await banco.lerEquipe(usuario);
+        if (!u || !(await conferirSenha(senha, u))) { aviso("Usuário ou senha não conferem"); return; }
+        eu = { usuario: u.usuario, nome: u.nome, admin: !!u.admin };
+        guardado.set("qtn_sessao_equipe", JSON.stringify(eu));
+        $("#senha").value = "";
+        abrirAreaEquipe();
+      } catch (err) { console.error(err); aviso("Não foi possível entrar"); }
+      finally { b.disabled = false; b.textContent = "Entrar"; }
+    }
 
-function sair() {
-  guardado.del("qtn_sessao_equipe");
-  eu = null;
-  desligarEquipe();
-  $("#appEquipe").classList.add("oculto");
-  $("#telaLogin").classList.add("oculto");
-  $("#telaPedido").classList.remove("oculto");
-  $("#usuario").value = ""; $("#senha").value = "";
-  scrollTo({ top: 0 });
-}
+    function sair() {
+      guardado.del("qtn_sessao_equipe");
+      eu = null; listaPermMontada = [];
+      desligarEquipe();
+      $("#appEquipe").classList.add("oculto");
+      $("#telaLogin").classList.add("oculto");
+      $("#telaPedido").classList.remove("oculto");
+      $("#usuario").value = ""; $("#senha").value = "";
+      scrollTo({ top: 0 });
+    }
 
-let desinscreverEquipe = [];
-function desligarEquipe() { desinscreverEquipe.forEach((f) => { try { f(); } catch {} }); desinscreverEquipe = []; }
+    let desinscreverEquipe = [], observandoHoje = false, observandoEquipe = false;
+    function desligarEquipe() {
+      desinscreverEquipe.forEach((f) => { try { f(); } catch { } });
+      desinscreverEquipe = []; observandoHoje = observandoEquipe = false;
+    }
+    // uma única assinatura dos pedidos de hoje para Permanência e Painel
+    function observarHoje() {
+      if (observandoHoje) return;
+      observandoHoje = true;
+      desinscreverEquipe.push(banco.observarDia((l) => {
+        pedidosHoje = l;
+        if (!$("#telaPermanencia").classList.contains("oculto")) atualizarPPermRef();
+        if (!$("#telaPainel").classList.contains("oculto")) desenharPainel();
+      }));
+    }
 
 
-/* =====================================================================
-   6b) Permanência — monta lista ligando para os setores
-   ===================================================================== */
-let pPermRef = "almoco", listaPermMontada = [], permSetorSel = null, permQtd = 1;
+    /* =====================================================================
+       6b) Permanência — monta lista ligando para os setores
+       ===================================================================== */
+    let pPermRef = "almoco", listaPermMontada = [], permSetorSel = null, permQtd = 1;
 
-function abrirPermanencia() {
-  pPermRef = fechado("almoco") && !fechado("janta") ? "janta" : "almoco";
-  // garantir que pedidosHoje está sendo observado
-  if (!desinscreverEquipe.length) {
-    desinscreverEquipe.push(banco.observarDia((l) => { pedidosHoje = l; if (!$("#telaPermanencia").classList.contains("oculto")) atualizarPPermRef(); if (!$("#telaPainel").classList.contains("oculto")) desenharPainel(); }));
-  }
-  atualizarPPermRef();
+    function abrirPermanencia() {
+      pPermRef = fechado("almoco") && !fechado("janta") ? "janta" : "almoco";
+      observarHoje();
+      atualizarPPermRef();
 
-  // grade de setores
-  const grid = $("#setoresPermGrid");
-  grid.innerHTML = CONFIG.setores.map((s) =>
-    `<button type="button" class="setor-btn" data-setor="${escapar(s)}">${escapar(s)}</button>`
-  ).join("");
-  grid.addEventListener("click", (e) => {
-    const b = e.target.closest(".setor-btn"); if (!b) return;
-    $$("#setoresPermGrid .setor-btn").forEach((x) => x.classList.remove("aria-pressed"));
-    $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
-    b.setAttribute("aria-pressed", "true");
-    permSetorSel = b.dataset.setor;
-    $("#permSetorLabel").textContent = permSetorSel;
-    permQtd = 1; atualizarPermQtd();
-    $("#permControles").style.display = "flex";
-  });
+      // grade de setores
+      const grid = $("#setoresPermGrid");
+      grid.innerHTML = CONFIG.setores.map((s) =>
+        `<button type="button" class="setor-btn" data-setor="${escapar(s)}">${escapar(s)}</button>`
+      ).join("");
+      grid.onclick = (e) => {
+        const b = e.target.closest(".setor-btn"); if (!b) return;
+        $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        permSetorSel = b.dataset.setor;
+        $("#permSetorLabel").textContent = permSetorSel;
+        permQtd = 1; atualizarPermQtd();
+        $("#permControles").style.display = "flex";
+      };
+      permSetorSel = null; $("#permControles").style.display = "none";
 
-  listaPermMontada = [];
-  desenharListaPerm();
-}
+      // a lista montada continua ao trocar de aba; só zera ao enviar, limpar ou sair
+      desenharListaPerm();
+    }
 
-function atualizarPPermRef() {
-  $$(".ppref").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ref === pPermRef)));
-  const almTotal = pedidosHoje.filter((p) => p.refeicao === "almoco").length;
-  const janTotal = pedidosHoje.filter((p) => p.refeicao === "janta").length;
-  $("#pprefAlmoco").textContent = almTotal ? `${almTotal} pedido${almTotal===1?"":"s"} já confirmado${almTotal===1?"":"s"}` : fechado("almoco") ? "encerrado" : `até ${CONFIG.prazos.almoco}`;
-  $("#pprefJanta").textContent  = janTotal ? `${janTotal} pedido${janTotal===1?"":"s"} já confirmado${janTotal===1?"":"s"}` : fechado("janta")  ? "encerrado" : `até ${CONFIG.prazos.janta}`;
-}
+    function atualizarPPermRef() {
+      $$(".ppref").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ref === pPermRef)));
+      const almTotal = pedidosHoje.filter((p) => p.refeicao === "almoco").length;
+      const janTotal = pedidosHoje.filter((p) => p.refeicao === "janta").length;
+      $("#pprefAlmoco").textContent = almTotal ? `${almTotal} pedido${almTotal === 1 ? "" : "s"} já confirmado${almTotal === 1 ? "" : "s"}` : fechado("almoco") ? "encerrado" : `até ${CONFIG.prazos.almoco}`;
+      $("#pprefJanta").textContent = janTotal ? `${janTotal} pedido${janTotal === 1 ? "" : "s"} já confirmado${janTotal === 1 ? "" : "s"}` : fechado("janta") ? "encerrado" : `até ${CONFIG.prazos.janta}`;
+    }
 
-function atualizarPermQtd() {
-  $("#permQtdNum").textContent = permQtd;
-  $("#permMenos").disabled = permQtd <= 1;
-  $("#permMais").disabled = permQtd >= 20;
-}
+    function atualizarPermQtd() {
+      $("#permQtdNum").textContent = permQtd;
+      $("#permMenos").disabled = permQtd <= 1;
+      $("#permMais").disabled = permQtd >= 20;
+    }
 
-function desenharListaPerm() {
-  const box = $("#listaPermBox");
-  if (!listaPermMontada.length) { box.classList.add("oculto"); return; }
-  box.classList.remove("oculto");
-  const total = listaPermMontada.reduce((s, x) => s + x.qtd, 0);
-  $("#permTotal").textContent = `${total} marmita${total===1?"":"s"}`;
-  $("#listaPerm").innerHTML = listaPermMontada.map((x, i) => `
+    function desenharListaPerm() {
+      const box = $("#listaPermBox");
+      if (!listaPermMontada.length) { box.classList.add("oculto"); return; }
+      box.classList.remove("oculto");
+      const total = listaPermMontada.reduce((s, x) => s + x.qtd, 0);
+      $("#permTotal").textContent = `${total} marmita${total === 1 ? "" : "s"}`;
+      $("#listaPerm").innerHTML = listaPermMontada.map((x, i) => `
     <div class="lista-perm-item">
       <span class="lp-setor">${escapar(x.setor)}</span>
       <span class="lp-qtd">${x.qtd}</span>
-      <button type="button" class="lp-del" data-idx="${i}" aria-label="Remover">×</button>
+      <button type="button" class="lp-del" data-idx="${i}" aria-label="Remover ${escapar(x.setor)}">×</button>
     </div>`).join("");
-  $$("#listaPerm .lp-del").forEach((b) => b.onclick = () => {
-    listaPermMontada.splice(Number(b.dataset.idx), 1);
-    desenharListaPerm();
-  });
-}
-
-async function enviarListaPerm() {
-  if (!listaPermMontada.length) return;
-  if (fechado(pPermRef)) { aviso(`Prazo do ${REFEICOES[pPermRef].toLowerCase()} encerrado`); return; }
-  const b = $("#btnEnviarPerm"); b.disabled = true; b.textContent = "Enviando…";
-  try {
-    for (const item of listaPermMontada) {
-      const dispositivo = "perm_" + eu.usuario + "_" + item.setor.replace(/[^a-z0-9]/gi,"");
-      const p = {
-        id: idPedido(pPermRef, dispositivo),
-        data: hojeISO(), refeicao: pPermRef,
-        usuario: eu.usuario, nome: `${eu.nome} (${item.setor})`,
-        setor: item.setor, quantidade: item.qtd,
-        hora: agoraHM(), entregue: false,
-        usuario_dispositivo: dispositivo,
-        viaPermancia: true,
-      };
-      await banco.salvarPedido(p);
+      $$("#listaPerm .lp-del").forEach((b) => b.onclick = () => {
+        listaPermMontada.splice(Number(b.dataset.idx), 1);
+        desenharListaPerm();
+      });
     }
-    aviso(`${listaPermMontada.length} setor${listaPermMontada.length===1?"":"es"} confirmado${listaPermMontada.length===1?"":"s"}`);
-    listaPermMontada = [];
-    desenharListaPerm();
-    $("#permControles").style.display = "none";
-    $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
-    permSetorSel = null;
-  } catch (err) { console.error(err); aviso("Erro ao enviar. Tente de novo."); }
-  finally { b.disabled = false; b.textContent = "Confirmar todos os pedidos"; }
-}
 
-/* =====================================================================
-   6) Painel do motorista
-   ===================================================================== */
-let pRef = "almoco", pedidosHoje = [];
+    async function enviarListaPerm() {
+      if (!listaPermMontada.length) return;
+      if (fechado(pPermRef)) { aviso(`Prazo d${ARTIGO[pPermRef]} ${REFEICOES[pPermRef].toLowerCase()} encerrado`); return; }
+      const b = $("#btnEnviarPerm"); b.disabled = true; b.textContent = "Enviando…";
+      try {
+        for (const item of listaPermMontada) {
+          const dispositivo = "perm_" + eu.usuario + "_" + item.setor.replace(/[^a-z0-9]/gi, "");
+          const p = {
+            id: idPedido(pPermRef, dispositivo),
+            data: hojeISO(), refeicao: pPermRef,
+            usuario: eu.usuario, nome: `${eu.nome} (${item.setor})`,
+            setor: item.setor, quantidade: item.qtd,
+            hora: agoraHM(), entregue: false,
+            usuario_dispositivo: dispositivo,
+            viaPermancia: true,
+          };
+          await banco.salvarPedido(p);
+        }
+        aviso(`${listaPermMontada.length} setor${listaPermMontada.length === 1 ? "" : "es"} confirmado${listaPermMontada.length === 1 ? "" : "s"}`);
+        listaPermMontada = [];
+        desenharListaPerm();
+        $("#permControles").style.display = "none";
+        $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
+        permSetorSel = null;
+      } catch (err) { console.error(err); aviso("Erro ao enviar. Tente de novo."); }
+      finally { b.disabled = false; b.textContent = "Confirmar todos os pedidos"; }
+    }
 
-function abrirPainel() {
-  $("#painelData").textContent = dataLonga(hojeISO());
-  pRef = fechado("almoco") && !fechado("janta") ? "janta" : "almoco";
-  $$(".pref").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ref === pRef)));
-  desinscreverEquipe.push(banco.observarDia((l) => { pedidosHoje = l; desenharPainel(); }));
-}
-const daRefeicao = () => pedidosHoje.filter((p) => p.refeicao === pRef);
-const agrupar = (l, f) => l.reduce((m, p) => { const k = f(p); (m[k] ||= []).push(p); return m; }, {});
+    /* =====================================================================
+       6) Painel do motorista
+       ===================================================================== */
+    let pRef = "almoco", pedidosHoje = [];
 
-function desenharPainel() {
-  const lista = daRefeicao();
-  const soma = (l) => l.reduce((s,p) => s + (Number(p.quantidade)||1), 0);
-  const total = soma(lista);
+    function abrirPainel() {
+      $("#painelData").textContent = dataLonga(hojeISO());
+      pRef = fechado("almoco") && !fechado("janta") ? "janta" : "almoco";
+      $$(".pref").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ref === pRef)));
+      observarHoje();
+      desenharPainel();
+    }
+    const daRefeicao = () => pedidosHoje.filter((p) => p.refeicao === pRef);
+    const agrupar = (l, f) => l.reduce((m, p) => { const k = f(p); (m[k] ||= []).push(p); return m; }, {});
 
-  const totalAlmoco = soma(pedidosHoje.filter((p) => p.refeicao === "almoco"));
-  const totalJanta  = soma(pedidosHoje.filter((p) => p.refeicao === "janta"));
-  const pedsAlmoco  = pedidosHoje.filter((p) => p.refeicao === "almoco").length;
-  const pedsJanta   = pedidosHoje.filter((p) => p.refeicao === "janta").length;
-  $("#prefAlmoco").textContent = `${totalAlmoco} marmita${totalAlmoco===1?"":"s"} (${pedsAlmoco} pedido${pedsAlmoco===1?"":"s"})`;
-  $("#prefJanta").textContent  = `${totalJanta}  marmita${totalJanta===1?"":"s"} (${pedsJanta} pedido${pedsJanta===1?"":"s"})`;
-  $("#totalNum").textContent = total;
-  $("#totalLabel").textContent = `${total === 1 ? "marmita" : "marmitas"} · ${REFEICOES[pRef].toLowerCase()} de hoje`;
+    function desenharPainel() {
+      const lista = daRefeicao();
+      const soma = (l) => l.reduce((s, p) => s + (Number(p.quantidade) || 1), 0);
+      const total = soma(lista);
 
-  let risco = "";
-  for (let i = 0; i < Math.floor(total / 5); i++) risco += `<span class="grupo cheio"><i></i><i></i><i></i><i></i></span>`;
-  if (total % 5) risco += `<span class="grupo">${"<i></i>".repeat(total % 5)}</span>`;
-  $("#risco").innerHTML = risco;
+      const totalAlmoco = soma(pedidosHoje.filter((p) => p.refeicao === "almoco"));
+      const totalJanta = soma(pedidosHoje.filter((p) => p.refeicao === "janta"));
+      const pedsAlmoco = pedidosHoje.filter((p) => p.refeicao === "almoco").length;
+      const pedsJanta = pedidosHoje.filter((p) => p.refeicao === "janta").length;
+      $("#prefAlmoco").textContent = `${totalAlmoco} marmita${totalAlmoco === 1 ? "" : "s"} (${pedsAlmoco} pedido${pedsAlmoco === 1 ? "" : "s"})`;
+      $("#prefJanta").textContent = `${totalJanta} marmita${totalJanta === 1 ? "" : "s"} (${pedsJanta} pedido${pedsJanta === 1 ? "" : "s"})`;
+      animarNumero($("#totalNum"), total);
+      $("#totalLabel").textContent = `${total === 1 ? "marmita" : "marmitas"} · ${REFEICOES[pRef].toLowerCase()} de hoje`;
 
-  const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
-  const chaves = Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR"));
-  $("#porSetor").innerHTML = chaves.length
-    ? chaves.map((s) => {
-        const qtdS = porSetor[s].reduce((a,p)=>a+(Number(p.quantidade)||1),0);
-        const pedsS = porSetor[s].length;
-        return `<div class="tab"><span>${escapar(s)}</span><b>${qtdS} <small style="font-weight:500;font-size:13px">(${pedsS} pedido${pedsS===1?"":"s"})</small></b></div>`;
-      }).join("")
-    : `<p class="vazio">Ninguém pediu ainda.</p>`;
+      let risco = "";
+      for (let i = 0; i < Math.floor(total / 5); i++) risco += `<span class="grupo cheio"><i></i><i></i><i></i><i></i></span>`;
+      if (total % 5) risco += `<span class="grupo">${"<i></i>".repeat(total % 5)}</span>`;
+      $("#risco").innerHTML = risco;
 
-  const entregues = soma(lista.filter((p) => p.entregue));
-  $("#progresso").textContent = total ? `${entregues} de ${total} marmitas entregues` : "";
+      const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
+      const chaves = Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR"));
+      $("#porSetor").innerHTML = chaves.length
+        ? chaves.map((s) => {
+          const qtdS = porSetor[s].reduce((a, p) => a + (Number(p.quantidade) || 1), 0);
+          const pedsS = porSetor[s].length;
+          return `<div class="tab"><span>${escapar(s)}</span><b>${qtdS} <small style="font-weight:500;font-size:13px">(${pedsS} pedido${pedsS === 1 ? "" : "s"})</small></b></div>`;
+        }).join("")
+        : `<p class="vazio">Ninguém pediu ainda.</p>`;
 
-  $("#listaEntrega").innerHTML = lista.length
-    ? chaves.map((s) => `
-        <div class="grupo-setor">${escapar(s)} · ${porSetor[s].reduce((a,p)=>a+(Number(p.quantidade)||1),0)} marmitas</div>
+      const entregues = soma(lista.filter((p) => p.entregue));
+      $("#progresso").textContent = total ? `${entregues} de ${total} marmitas entregues` : "";
+
+      $("#listaEntrega").innerHTML = lista.length
+        ? chaves.map((s) => `
+        <div class="grupo-setor">${escapar(s)} · ${porSetor[s].reduce((a, p) => a + (Number(p.quantidade) || 1), 0)} marmitas</div>
         ${porSetor[s].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).map((p) => `
           <div class="item ${p.entregue ? "pronto" : ""}">
             <button type="button" class="marcar" data-id="${escapar(p.id)}" aria-pressed="${!!p.entregue}" aria-label="Marcar como entregue">✓</button>
@@ -961,110 +1901,112 @@ function desenharPainel() {
               <div class="item-sub">${p.quantidade > 1 ? p.quantidade + " marmitas · " : ""}pediu ${escapar(p.hora)}</div>
             </div>
           </div>`).join("")}`).join("")
-    : `<p class="vazio">Nenhum pedido para esta refeição.</p>`;
+        : `<p class="vazio">Nenhum pedido para esta refeição.</p>`;
 
-  $$("#listaEntrega .marcar").forEach((b) => b.onclick = () => banco.marcarEntregue(b.dataset.id, b.getAttribute("aria-pressed") !== "true"));
-}
+      $$("#listaEntrega .marcar").forEach((b) => b.onclick = () => banco.marcarEntregue(b.dataset.id, b.getAttribute("aria-pressed") !== "true"));
+    }
 
-function textoResumo() {
-  const lista = daRefeicao();
-  const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
-  const totalMsg = lista.reduce((a,p)=>a+(Number(p.quantidade)||1),0);
-  const linhas = [`*Marmitas — ${REFEICOES[pRef]} de ${dataLonga(hojeISO())}*`, `*TOTAL: ${totalMsg} marmita${totalMsg===1?"":"s"} (${lista.length} pedido${lista.length===1?"":"s"})*`, ""];
-  Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((s) => {
-    const totalS = porSetor[s].reduce((a,p)=>a+(Number(p.quantidade)||1),0);
-    linhas.push(`*${s} — ${totalS} marmita${totalS===1?"":"s"}*`);
-    porSetor[s].sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"))
-      .forEach((p) => linhas.push(`  ${p.nome}: ${p.quantidade||1}`));
-  });
-  return linhas.join("\n");
-}
+    function textoResumo() {
+      const lista = daRefeicao();
+      const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
+      const totalMsg = lista.reduce((a, p) => a + (Number(p.quantidade) || 1), 0);
+      const linhas = [`*Marmitas — ${REFEICOES[pRef]} de ${dataLonga(hojeISO())}*`, `*TOTAL: ${totalMsg} marmita${totalMsg === 1 ? "" : "s"} (${lista.length} pedido${lista.length === 1 ? "" : "s"})*`, ""];
+      Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((s) => {
+        const totalS = porSetor[s].reduce((a, p) => a + (Number(p.quantidade) || 1), 0);
+        linhas.push(`*${s} — ${totalS} marmita${totalS === 1 ? "" : "s"}*`);
+        porSetor[s].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
+          .forEach((p) => linhas.push(`  ${p.nome}: ${p.quantidade || 1}`));
+      });
+      return linhas.join("\n");
+    }
 
-/* =====================================================================
-   7) Histórico — relatório por período
-   ===================================================================== */
-let ultimoHistorico = [];
+    /* =====================================================================
+       7) Histórico — relatório por período
+       ===================================================================== */
+    let ultimoHistorico = [];
 
-function abrirHistorico() {
-  if (!$("#hIni").value) $("#hIni").value = somaDias(hojeISO(), -6);
-  if (!$("#hFim").value) $("#hFim").value = hojeISO();
-  $("#hIni").max = hojeISO(); $("#hFim").max = hojeISO();
-}
+    function abrirHistorico() {
+      if (!$("#hIni").value) $("#hIni").value = somaDias(hojeISO(), -6);
+      if (!$("#hFim").value) $("#hFim").value = hojeISO();
+      $("#hIni").max = hojeISO(); $("#hFim").max = hojeISO();
+    }
 
-async function buscarHistorico(e) {
-  e.preventDefault();
-  const inicio = $("#hIni").value, fim = $("#hFim").value;
-  if (!inicio || !fim) return;
-  if (inicio > fim) { aviso("A data \"De\" precisa vir antes da data \"Até\""); return; }
+    async function buscarHistorico(e) {
+      e.preventDefault();
+      const inicio = $("#hIni").value, fim = $("#hFim").value;
+      if (!inicio || !fim) return;
+      if (inicio > fim) { aviso("A data \"De\" precisa vir antes da data \"Até\""); return; }
 
-  const b = $("#btnBuscarHistorico"); b.disabled = true; b.textContent = "Buscando…";
-  try {
-    ultimoHistorico = await banco.lerPeriodo(inicio, fim);
-    desenharHistorico(inicio, fim);
-  } catch (err) { console.error(err); aviso("Não deu para buscar o histórico"); }
-  finally { b.disabled = false; b.textContent = "Buscar"; }
-}
+      const b = $("#btnBuscarHistorico"); b.disabled = true; b.textContent = "Buscando…";
+      try {
+        ultimoHistorico = await banco.lerPeriodo(inicio, fim);
+        desenharHistorico(inicio, fim);
+      } catch (err) { console.error(err); aviso("Não deu para buscar o histórico"); }
+      finally { b.disabled = false; b.textContent = "Buscar"; }
+    }
 
-function desenharHistorico(inicio, fim) {
-  const lista = ultimoHistorico;
-  $("#resultadoHistorico").classList.toggle("oculto", lista.length === 0);
-  $("#hVazio").classList.toggle("oculto", lista.length > 0);
-  if (!lista.length) return;
+    function desenharHistorico(inicio, fim) {
+      const lista = ultimoHistorico;
+      $("#resultadoHistorico").classList.toggle("oculto", lista.length === 0);
+      $("#hVazio").classList.toggle("oculto", lista.length > 0);
+      if (!lista.length) return;
 
-  const somaHist = (l) => l.reduce((s,p)=>s+(Number(p.quantidade)||1),0);
-  const totalHist = somaHist(lista);
-  $("#hTotalNum").textContent = totalHist;
-  $("#hTotalLabel").textContent = `marmita${totalHist===1?"":"s"} · ${dataCurtaBR(inicio)} a ${dataCurtaBR(fim)}`;
+      const somaHist = (l) => l.reduce((s, p) => s + (Number(p.quantidade) || 1), 0);
+      const totalHist = somaHist(lista);
+      animarNumero($("#hTotalNum"), totalHist);
+      $("#hTotalLabel").textContent = `marmita${totalHist === 1 ? "" : "s"} · ${dataCurtaBR(inicio)} a ${dataCurtaBR(fim)}`;
 
-  const porRefeicao = agrupar(lista, (p) => p.refeicao);
-  $("#hPorRefeicao").innerHTML = Object.keys(REFEICOES).map((r) => {
-    const qtdR = somaHist(porRefeicao[r]||[]);
-    const pedsR = (porRefeicao[r]||[]).length;
-    return `<div class="tab"><span>${REFEICOES[r]}</span><b>${qtdR} <small style="font-weight:500;font-size:13px">(${pedsR} pedido${pedsR===1?"":"s"})</small></b></div>`;
-  }).join("");
+      const porRefeicao = agrupar(lista, (p) => p.refeicao);
+      $("#hPorRefeicao").innerHTML = Object.keys(REFEICOES).map((r) => {
+        const qtdR = somaHist(porRefeicao[r] || []);
+        const pedsR = (porRefeicao[r] || []).length;
+        return `<div class="tab"><span>${REFEICOES[r]}</span><b>${qtdR} <small style="font-weight:500;font-size:13px">(${pedsR} pedido${pedsR === 1 ? "" : "s"})</small></b></div>`;
+      }).join("");
 
-  const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
-  $("#hPorSetor").innerHTML = Object.keys(porSetor).sort((a,b)=>a.localeCompare(b,"pt-BR"))
-    .map((s) => `<div class="tab"><span>${escapar(s)}</span><b>${somaHist(porSetor[s])}</b></div>`).join("");
+      const porSetor = agrupar(lista, (p) => p.setor || "Sem setor");
+      $("#hPorSetor").innerHTML = Object.keys(porSetor).sort((a, b) => a.localeCompare(b, "pt-BR"))
+        .map((s) => `<div class="tab"><span>${escapar(s)}</span><b>${somaHist(porSetor[s])}</b></div>`).join("");
 
-  const porDia = agrupar(lista, (p) => p.data);
-  $("#hPorDia").innerHTML = Object.keys(porDia).sort().reverse().map((d) => {
-    const doDia = porDia[d];
-    const almoco = doDia.filter((p) => p.refeicao === "almoco").length;
-    const janta = doDia.filter((p) => p.refeicao === "janta").length;
-    const almocoQ = doDia.filter(p=>p.refeicao==="almoco").reduce((a,p)=>a+(Number(p.quantidade)||1),0);
-    const jantaQ  = doDia.filter(p=>p.refeicao==="janta").reduce((a,p)=>a+(Number(p.quantidade)||1),0);
-    return `<div class="tab"><span>${dataLonga(d)}</span><b>${almocoQ} almoço · ${jantaQ} janta</b></div>`;
-  }).join("");
-}
+      const porDia = agrupar(lista, (p) => p.data);
+      $("#hPorDia").innerHTML = Object.keys(porDia).sort().reverse().map((d) => {
+        const doDia = porDia[d];
+        const almoco = doDia.filter((p) => p.refeicao === "almoco").length;
+        const janta = doDia.filter((p) => p.refeicao === "janta").length;
+        const almocoQ = doDia.filter(p => p.refeicao === "almoco").reduce((a, p) => a + (Number(p.quantidade) || 1), 0);
+        const jantaQ = doDia.filter(p => p.refeicao === "janta").reduce((a, p) => a + (Number(p.quantidade) || 1), 0);
+        return `<div class="tab"><span>${dataLonga(d)}</span><b>${almocoQ} almoço · ${jantaQ} janta</b></div>`;
+      }).join("");
+    }
 
-function exportarCsv() {
-  if (!ultimoHistorico.length) return;
-  const linhas = [["data", "refeicao", "nome", "setor", "hora", "entregue"]];
-  [...ultimoHistorico].sort((a, b) => (a.data + a.refeicao).localeCompare(b.data + b.refeicao))
-    .forEach((p) => linhas.push([p.data, REFEICOES[p.refeicao] || p.refeicao, p.nome, p.setor || "", p.hora, p.entregue ? "sim" : "não"]));
-  const csv = linhas.map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\n");
-  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `marmitas_${$("#hIni").value}_a_${$("#hFim").value}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
+    function exportarCsv() {
+      if (!ultimoHistorico.length) return;
+      const linhas = [["data", "refeicao", "nome", "setor", "quantidade", "hora", "entregue"]];
+      [...ultimoHistorico].sort((a, b) => (a.data + a.refeicao).localeCompare(b.data + b.refeicao))
+        .forEach((p) => linhas.push([p.data, REFEICOES[p.refeicao] || p.refeicao, p.nome, p.setor || "", Number(p.quantidade) || 1, p.hora, p.entregue ? "sim" : "não"]));
+      const csv = linhas.map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `marmitas_${$("#hIni").value}_a_${$("#hFim").value}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
 
-/* =====================================================================
-   8) Administração — equipe e setores
-   ===================================================================== */
-let equipe = [];
+    /* =====================================================================
+       8) Administração — equipe e setores
+       ===================================================================== */
+    let equipe = [];
 
-function abrirAdmin() {
-  desinscreverEquipe.push(banco.observarEquipe((l) => { equipe = l; desenharEquipe(); }));
-}
+    function abrirAdmin() {
+      if (observandoEquipe) { desenharEquipe(); return; }
+      observandoEquipe = true;
+      desinscreverEquipe.push(banco.observarEquipe((l) => { equipe = l; desenharEquipe(); }));
+    }
 
-function desenharEquipe() {
-  const l = [...equipe].sort((a, b) => (a.nome || a.usuario).localeCompare(b.nome || b.usuario, "pt-BR"));
-  $("#listaEquipe").innerHTML = l.length
-    ? l.map((u) => `
+    function desenharEquipe() {
+      const l = [...equipe].sort((a, b) => (a.nome || a.usuario).localeCompare(b.nome || b.usuario, "pt-BR"));
+      $("#listaEquipe").innerHTML = l.length
+        ? l.map((u) => `
         <div class="item">
           <div class="item-info">
             <div class="item-nome">${escapar(u.nome || u.usuario)}${u.admin ? '<span class="cracha">Admin</span>' : ""}</div>
@@ -1072,170 +2014,177 @@ function desenharEquipe() {
           </div>
           <button type="button" class="btn btn-2 btn-mini" data-editar="${escapar(u.usuario)}">Editar</button>
         </div>`).join("")
-    : `<p class="vazio">Ninguém cadastrado ainda.</p>`;
-  $$("#listaEquipe [data-editar]").forEach((b) => b.onclick = () => editarEquipe(b.dataset.editar));
-}
-
-function editarEquipe(id) {
-  const u = equipe.find((x) => x.usuario === id); if (!u) return;
-  $("#eEditando").value = id;
-  $("#eUsuario").value = u.usuario; $("#eUsuario").disabled = true;
-  $("#eNome").value = u.nome || ""; $("#eAdmin").checked = !!u.admin;
-  $("#eSenha").value = "";
-  $("#eSenhaDica").textContent = "— em branco mantém a atual";
-  $("#tituloFormEquipe").textContent = "Editando " + u.usuario;
-  $("#btnSalvarEquipe").textContent = "Salvar alterações";
-  $("#botoesEdicaoEquipe").classList.remove("oculto");
-  $("#eNome").scrollIntoView({ behavior: "smooth", block: "center" });
-}
-
-function limparFormEquipe() {
-  $("#formEquipe").reset();
-  $("#eEditando").value = ""; $("#eUsuario").disabled = false;
-  $("#eSenhaDica").textContent = "";
-  $("#tituloFormEquipe").textContent = "Cadastrar motorista ou administrador";
-  $("#btnSalvarEquipe").textContent = "Cadastrar";
-  $("#botoesEdicaoEquipe").classList.add("oculto");
-}
-
-async function salvarEquipe(e) {
-  e.preventDefault();
-  const editando = $("#eEditando").value;
-  const usuario = $("#eUsuario").value.trim().toLowerCase().replace(/\s+/g, "");
-  const nome = $("#eNome").value.trim();
-  const senha = $("#eSenha").value;
-  const admin = $("#eAdmin").checked;
-
-  if (!usuario || !nome) { aviso("Usuário e nome são obrigatórios"); return; }
-  if (!editando && equipe.some((u) => u.usuario === usuario)) { aviso("Esse usuário já existe"); return; }
-  if ((!editando || senha) && senha.length < 6) { aviso("A senha precisa de 6 caracteres ou mais"); return; }
-
-  const dados = { usuario, nome, admin };
-  if (senha) Object.assign(dados, await criarSenha(senha));
-
-  const b = $("#btnSalvarEquipe"); b.disabled = true;
-  try {
-    await banco.salvarEquipe(dados);
-    aviso(editando ? "Alterações salvas" : `${nome} cadastrado`);
-    limparFormEquipe();
-  } catch (err) { console.error(err); aviso("Não deu para salvar"); }
-  finally { b.disabled = false; }
-}
-
-async function removerEquipe() {
-  const id = $("#eEditando").value; if (!id) return;
-  if (id === eu.usuario) { aviso("Você não pode remover a si mesmo"); return; }
-  if (!confirm(`Remover ${id}?`)) return;
-  try { await banco.apagarEquipe(id); limparFormEquipe(); aviso("Removido"); }
-  catch { aviso("Não deu para remover"); }
-}
-
-
-
-/* =====================================================================
-   9) Navegação
-   ===================================================================== */
-function irParaLogin() {
-  $("#telaPedido").classList.add("oculto");
-  $("#telaLogin").classList.remove("oculto");
-  scrollTo({ top: 0 });
-}
-function irParaAba(tela) {
-  $("#telaPermanencia").classList.toggle("oculto", tela !== "permanencia");
-  $("#telaPainel").classList.toggle("oculto", tela !== "painel");
-  $("#telaHistorico").classList.toggle("oculto", tela !== "historico");
-  $("#telaAdmin").classList.toggle("oculto", tela !== "admin");
-  $$("nav.abas button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tela === tela)));
-  scrollTo({ top: 0 });
-  if (tela === "permanencia") abrirPermanencia();
-  if (tela === "painel") abrirPainel();
-  if (tela === "historico") abrirHistorico();
-  if (tela === "admin") abrirAdmin();
-}
-function abrirAreaEquipe() {
-  $("#telaPedido").classList.add("oculto");
-  $("#telaLogin").classList.add("oculto");
-  $("#appEquipe").classList.remove("oculto");
-  $("#euNome").textContent = eu.nome;
-  $("#abaAdmin").classList.toggle("oculto", !eu.admin);
-  irParaAba("permanencia");
-}
-
-function ligarEventos() {
-  $("#nomeUnidade").textContent = CONFIG.unidade;
-  $("#nomeUnidade2").textContent = CONFIG.unidade;
-  $$("#formPedido .ref").forEach((b) => b.onclick = () => escolherRefeicao(b.dataset.ref));
-  $("#formPedido").addEventListener("submit", enviarPedido);
-  $("#irEquipe").onclick = irParaLogin;
-
-  $("#formLogin").addEventListener("submit", entrar);
-  $("#voltarPedido").onclick = () => { $("#telaLogin").classList.add("oculto"); $("#telaPedido").classList.remove("oculto"); };
-  $("#btnSair").onclick = sair;
-
-  $$("nav.abas button").forEach((b) => b.onclick = () => irParaAba(b.dataset.tela));
-
-  $("#painelData"); // noop, mantém referência viva
-  $$(".pref").forEach((b) => b.onclick = () => { pRef = b.dataset.ref; $$(".pref").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.ref === pRef))); desenharPainel(); });
-  $("#btnWhats").onclick = () => open(`https://wa.me/${CONFIG.whatsappContato.replace(/\D/g, "")}?text=${encodeURIComponent(textoResumo())}`, "_blank");
-  $("#btnCopiar").onclick = async () => { try { await navigator.clipboard.writeText(textoResumo()); aviso("Lista copiada"); } catch { prompt("Copie a lista:", textoResumo()); } };
-  $("#btnImprimir").onclick = () => print();
-
-  $("#formEquipe").addEventListener("submit", salvarEquipe);
-  $("#btnCancelarEquipe").onclick = limparFormEquipe;
-  $("#btnRemoverEquipe").onclick = removerEquipe;
-
-  // permanência
-  $$(".ppref").forEach((b) => b.onclick = () => { pPermRef = b.dataset.ref; atualizarPPermRef(); });
-  $("#permMenos").onclick = () => { permQtd = Math.max(1, permQtd-1); atualizarPermQtd(); };
-  $("#permMais").onclick  = () => { permQtd = Math.min(20, permQtd+1); atualizarPermQtd(); };
-  $("#permAdicionar").onclick = () => {
-    if (!permSetorSel) return;
-    const idx = listaPermMontada.findIndex((x) => x.setor === permSetorSel);
-    if (idx >= 0) listaPermMontada[idx].qtd = permQtd;
-    else listaPermMontada.push({ setor: permSetorSel, qtd: permQtd });
-    desenharListaPerm();
-    // limpar seleção do setor
-    $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed","false"));
-    permSetorSel = null; $("#permControles").style.display = "none";
-  };
-  $("#btnEnviarPerm").onclick = enviarListaPerm;
-  $("#btnLimparPerm").onclick = () => { listaPermMontada = []; desenharListaPerm(); };
-  // histórico
-  $("#formHistorico").addEventListener("submit", buscarHistorico);
-  $("#btnExportarCsv").onclick = exportarCsv;
-  $("#btnImprimirHistorico").onclick = () => print();
-}
-
-/* =====================================================================
-   10) Início
-   ===================================================================== */
-(async function iniciar() {
-  ligarEventos();
-
-  try { const b = await bancoFirebase(); if (b) { banco = b; modoLocal = false; } }
-  catch (err) { console.warn("Firebase indisponível:", err); }
-
-  if (!banco) {
-    banco = bancoLocal();
-    $("#avisoModo").classList.remove("oculto");
-    $("#avisoModo").innerHTML = `<b>Modo de teste.</b> Os pedidos ficam só neste aparelho.
-      Área da equipe: <b>admin</b> / <b>Tuleco4.0</b>.
-      Para valer, preencha o <code>firebaseConfig</code> no arquivo.`;
-  }
-  await banco.pronto();
-
-  montarTelaPedido();
-
-  try {
-    const s = JSON.parse(guardado.get("qtn_sessao_equipe", "null"));
-    if (s?.usuario) {
-      const u = await banco.lerEquipe(s.usuario);
-      if (u) { eu = { usuario: u.usuario, nome: u.nome, admin: !!u.admin }; abrirAreaEquipe(); }
+        : `<p class="vazio">Ninguém cadastrado ainda.</p>`;
+      $$("#listaEquipe [data-editar]").forEach((b) => b.onclick = () => editarEquipe(b.dataset.editar));
     }
-  } catch {}
 
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
-})();
-</script>
+    function editarEquipe(id) {
+      const u = equipe.find((x) => x.usuario === id); if (!u) return;
+      $("#eEditando").value = id;
+      $("#eUsuario").value = u.usuario; $("#eUsuario").disabled = true;
+      $("#eNome").value = u.nome || ""; $("#eAdmin").checked = !!u.admin;
+      $("#eSenha").value = "";
+      $("#eSenhaDica").textContent = "— em branco mantém a atual";
+      $("#tituloFormEquipe").textContent = "Editando " + u.usuario;
+      $("#btnSalvarEquipe").textContent = "Salvar alterações";
+      $("#botoesEdicaoEquipe").classList.remove("oculto");
+      $("#eNome").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function limparFormEquipe() {
+      $("#formEquipe").reset();
+      $("#eEditando").value = ""; $("#eUsuario").disabled = false;
+      $("#eSenhaDica").textContent = "";
+      $("#tituloFormEquipe").textContent = "Cadastrar motorista ou administrador";
+      $("#btnSalvarEquipe").textContent = "Cadastrar";
+      $("#botoesEdicaoEquipe").classList.add("oculto");
+    }
+
+    async function salvarEquipe(e) {
+      e.preventDefault();
+      const editando = $("#eEditando").value;
+      const usuario = $("#eUsuario").value.trim().toLowerCase().replace(/\s+/g, "");
+      const nome = $("#eNome").value.trim();
+      const senha = $("#eSenha").value;
+      const admin = $("#eAdmin").checked;
+
+      if (!usuario || !nome) { aviso("Usuário e nome são obrigatórios"); return; }
+      if (!editando && equipe.some((u) => u.usuario === usuario)) { aviso("Esse usuário já existe"); return; }
+      if ((!editando || senha) && senha.length < 6) { aviso("A senha precisa de 6 caracteres ou mais"); return; }
+
+      const dados = { usuario, nome, admin };
+      if (senha) Object.assign(dados, await criarSenha(senha));
+
+      const b = $("#btnSalvarEquipe"); b.disabled = true;
+      try {
+        await banco.salvarEquipe(dados);
+        aviso(editando ? "Alterações salvas" : `${nome} cadastrado`);
+        limparFormEquipe();
+      } catch (err) { console.error(err); aviso("Não deu para salvar"); }
+      finally { b.disabled = false; }
+    }
+
+    async function removerEquipe() {
+      const id = $("#eEditando").value; if (!id) return;
+      if (id === eu.usuario) { aviso("Você não pode remover a si mesmo"); return; }
+      if (!confirm(`Remover ${id}?`)) return;
+      try { await banco.apagarEquipe(id); limparFormEquipe(); aviso("Removido"); }
+      catch { aviso("Não deu para remover"); }
+    }
+
+
+
+    /* =====================================================================
+       9) Navegação
+       ===================================================================== */
+    function irParaLogin() {
+      $("#telaPedido").classList.add("oculto");
+      $("#telaLogin").classList.remove("oculto");
+      scrollTo({ top: 0 });
+    }
+    function irParaAba(tela) {
+      $("#telaPermanencia").classList.toggle("oculto", tela !== "permanencia");
+      $("#telaPainel").classList.toggle("oculto", tela !== "painel");
+      $("#telaHistorico").classList.toggle("oculto", tela !== "historico");
+      $("#telaAdmin").classList.toggle("oculto", tela !== "admin");
+      $$("nav.abas button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tela === tela)));
+      scrollTo({ top: 0 });
+      if (tela === "permanencia") abrirPermanencia();
+      if (tela === "painel") abrirPainel();
+      if (tela === "historico") abrirHistorico();
+      if (tela === "admin") abrirAdmin();
+    }
+    function abrirAreaEquipe() {
+      $("#telaPedido").classList.add("oculto");
+      $("#telaLogin").classList.add("oculto");
+      $("#appEquipe").classList.remove("oculto");
+      $("#euNome").textContent = eu.nome;
+      $("#abaAdmin").classList.toggle("oculto", !eu.admin);
+      irParaAba("permanencia");
+    }
+
+    function ligarEventos() {
+      $("#nomeUnidade").textContent = CONFIG.unidade;
+      $("#nomeUnidade2").textContent = CONFIG.unidade;
+      $$("#formPedido .btn-ref").forEach((b) => b.onclick = () => pedir(b.dataset.ref, b));
+      // "Enter" no teclado só fecha o teclado; o pedido é sempre pelo botão da refeição
+      $("#formPedido").addEventListener("submit", (e) => { e.preventDefault(); $("#nome").blur(); });
+      $("#irEquipe").onclick = irParaLogin;
+
+      $("#formLogin").addEventListener("submit", entrar);
+      $("#voltarPedido").onclick = () => { $("#telaLogin").classList.add("oculto"); $("#telaPedido").classList.remove("oculto"); };
+      $("#btnSair").onclick = sair;
+
+      $$("nav.abas button").forEach((b) => b.onclick = () => irParaAba(b.dataset.tela));
+
+      $("#painelData"); // noop, mantém referência viva
+      $$(".pref").forEach((b) => b.onclick = () => { pRef = b.dataset.ref; $$(".pref").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.ref === pRef))); desenharPainel(); });
+      $("#btnWhats").onclick = () => open(`https://wa.me/${CONFIG.whatsappContato.replace(/\D/g, "")}?text=${encodeURIComponent(textoResumo())}`, "_blank");
+      $("#btnCopiar").onclick = async () => { try { await navigator.clipboard.writeText(textoResumo()); aviso("Lista copiada"); } catch { prompt("Copie a lista:", textoResumo()); } };
+      $("#btnImprimir").onclick = () => print();
+
+      $("#formEquipe").addEventListener("submit", salvarEquipe);
+      $("#btnCancelarEquipe").onclick = limparFormEquipe;
+      $("#btnRemoverEquipe").onclick = removerEquipe;
+
+      // permanência
+      $$(".ppref").forEach((b) => b.onclick = () => { pPermRef = b.dataset.ref; atualizarPPermRef(); });
+      $("#permMenos").onclick = () => { permQtd = Math.max(1, permQtd - 1); atualizarPermQtd(); };
+      $("#permMais").onclick = () => { permQtd = Math.min(20, permQtd + 1); atualizarPermQtd(); };
+      $("#permAdicionar").onclick = () => {
+        if (!permSetorSel) return;
+        const idx = listaPermMontada.findIndex((x) => x.setor === permSetorSel);
+        if (idx >= 0) listaPermMontada[idx].qtd = permQtd;
+        else listaPermMontada.push({ setor: permSetorSel, qtd: permQtd });
+        desenharListaPerm();
+        // limpar seleção do setor
+        $$("#setoresPermGrid .setor-btn").forEach((x) => x.setAttribute("aria-pressed", "false"));
+        permSetorSel = null; $("#permControles").style.display = "none";
+      };
+      $("#btnEnviarPerm").onclick = enviarListaPerm;
+      $("#btnLimparPerm").onclick = () => { if (!confirm("Limpar a lista montada?")) return; listaPermMontada = []; desenharListaPerm(); };
+      // histórico
+      $("#formHistorico").addEventListener("submit", buscarHistorico);
+      $("#btnExportarCsv").onclick = exportarCsv;
+      $("#btnImprimirHistorico").onclick = () => print();
+    }
+
+    /* =====================================================================
+       10) Início
+       ===================================================================== */
+    (async function iniciar() {
+      ligarEventos();
+
+      try { const b = await bancoFirebase(); if (b) { banco = b; modoLocal = false; } }
+      catch (err) { console.warn("Firebase indisponível:", err); }
+
+      if (!banco) {
+        banco = bancoLocal();
+        $("#avisoModo").classList.remove("oculto");
+        $("#avisoModo").innerHTML = `<span><b>Modo de teste.</b> Os pedidos ficam só neste aparelho.
+      Área da equipe: <b>admin</b> / <b>Tuleco4.0</b>.
+      Para valer, preencha o <code>firebaseConfig</code> no arquivo.</span>`;
+      }
+      try { await banco.pronto(); }
+      catch (err) {
+        console.error(err);
+        $("#carregando").textContent = "Não foi possível conectar. Verifique a internet e recarregue a página.";
+        return;
+      }
+
+      montarTelaPedido();
+
+      try {
+        const s = JSON.parse(guardado.get("qtn_sessao_equipe", "null"));
+        if (s?.usuario) {
+          const u = await banco.lerEquipe(s.usuario);
+          if (u) { eu = { usuario: u.usuario, nome: u.nome, admin: !!u.admin }; abrirAreaEquipe(); }
+        }
+      } catch { }
+
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => { });
+    })();
+  </script>
 </body>
+
 </html>
